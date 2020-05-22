@@ -2,17 +2,19 @@
 // Created by mo on 21/05/20.
 //
 #include "DisjointForest.h"
+#include <iostream>
 
-Component* makeSet(const int x){
-    auto* tree = new Component;
-    Pixel* node = new Pixel;
-    node->value = x;
-    tree->nodes.push_back(node);
-    tree->id = node->value;
-    tree->representative = node;
-    node->parent = node;
-    node->parentTree = tree;
-    return tree;
+Component* makeComponent(const int row, const int column, const int intensity){
+    auto* component = new Component;
+    auto* pixel = new Pixel;
+    pixel->intensity = intensity;
+    pixel->row = row;
+    pixel->column = column;
+    pixel->parent = pixel;
+    pixel->parentTree = component;
+    component->representative = pixel;
+    component->pixels.push_back(pixel);
+    return component;
 }
 
 inline Component* findSet(Pixel* node){
@@ -20,20 +22,20 @@ inline Component* findSet(Pixel* node){
 }
 
 void setParentTree(Component* childTreePointer, Component* parentTreePointer){
-    for(Pixel* nodePointer: childTreePointer->nodes){
-        parentTreePointer->nodes.push_back(nodePointer);
+    for(Pixel* nodePointer: childTreePointer->pixels){
+        parentTreePointer->pixels.push_back(nodePointer);
         nodePointer->parentTree = parentTreePointer;
     }
 }
 
-void removeTree(std::vector<Component *> &trees, Component*  tree){
-    for(int index=0; index < trees.size(); ++index){
-        if(trees[index]==tree){
-            trees.erase(trees.begin() + (index));
+void removeTree(std::vector<Component *> &allComponents, Component*  component){
+    for(int index=0; index < allComponents.size(); ++index){
+        if(allComponents[index] == component){
+            allComponents.erase(allComponents.begin() + (index));
             break;
         }
     }
-    delete tree;
+    delete component;
 }
 
 void link(Component* x, Component* y, std::vector<Component *> &trees){
@@ -55,4 +57,11 @@ void link(Component* x, Component* y, std::vector<Component *> &trees){
 
 void setUnion(Pixel* x, Pixel* y, std::vector<Component *> &trees){
     link(findSet(x), findSet(y), trees);
+}
+
+Edge* createEdge(Pixel* pixel1, Pixel* pixel2){
+    Edge* edge = new Edge;
+    edge->weight = abs(pixel1->intensity - pixel2 ->intensity);
+    edge->n1 = pixel1;
+    edge->n2 = pixel2;
 }

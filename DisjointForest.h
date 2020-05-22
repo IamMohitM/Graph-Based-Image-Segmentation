@@ -11,12 +11,13 @@ struct Component;
 struct Pixel{
     Component* parentTree;
     Pixel* parent;
-    int value;
+    int intensity;
+    int row;
+    int column;
 };
 
 struct Component{
-    std::vector<Pixel *> nodes;
-    int id;
+    std::vector<Pixel *> pixels;
     int rank = 0;
     Pixel* representative;
 };
@@ -27,8 +28,8 @@ struct Edge{
     Pixel* n2;
 };
 
-Component* makeSet(int x);
+Component* makeComponent(int row, int col, int intensity);
 inline Component* findSet(Pixel* x);
 void link(Component* x, Component* y, std::vector<Component *> &trees);
 void setUnion(Pixel* x, Pixel* y, std::vector<Component *> &trees);
-
+Edge* createEdge(Pixel* pixel1, Pixel* pixel2);
