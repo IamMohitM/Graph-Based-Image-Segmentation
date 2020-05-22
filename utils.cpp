@@ -44,7 +44,6 @@ std::tuple<Edge**, int> getEdges(const cv::Mat &img, std::vector<Pixel *> &pixel
             Pixel* presentPixel = pixels[getSingleIndex(row, column, columns)];
             if(row < rows - 1){
                 if(column == 0){
-
                     edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row, column+1, columns)]);
                     edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column+1, columns)]);
                     edges[edgeCount++] = createEdge(presentPixel , pixels[getSingleIndex(row+1, column, columns)]);
@@ -71,4 +70,27 @@ std::tuple<Edge**, int> getEdges(const cv::Mat &img, std::vector<Pixel *> &pixel
     std::cout << "Array Size: " << edgeArraySize << '\n';
 
     return {edges, edgeArraySize};
+}
+
+int partition(Edge** &edges, int startingIndex, int lastIndex){
+    int pivot = edges[startingIndex]->weight;
+    int pivotIndex = startingIndex+1;
+    for (int i=startingIndex+1; i < lastIndex; ++i){
+        if (edges[i]->weight < pivot){
+            std::swap(edges[pivotIndex], edges[i]);
+            ++pivotIndex;
+        }
+    }
+    --pivotIndex;
+    std::swap(edges[pivotIndex], edges[startingIndex]);
+    return pivotIndex;
+
+}
+
+void quickSort(Edge** &edges, int startingIndex, int lastIndex){
+    if (startingIndex < lastIndex){
+        int pivotIndex = partition(edges, startingIndex, lastIndex);
+        quickSort(edges, startingIndex, pivotIndex);
+        quickSort(edges, pivotIndex+1, lastIndex);
+    }
 }

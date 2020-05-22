@@ -64,4 +64,5 @@ Edge* createEdge(Pixel* pixel1, Pixel* pixel2){
     edge->weight = abs(pixel1->intensity - pixel2 ->intensity);
     edge->n1 = pixel1;
     edge->n2 = pixel2;
+    return edge;
 }
