@@ -2,7 +2,7 @@
 #include <vector>
 #include "DisjointForest.h"
 
-float thresholdFunction(int componentSize){
+float thresholdFunction(float componentSize){
     float k = 300;
     return k/componentSize;
 }
@@ -10,7 +10,6 @@ float thresholdFunction(int componentSize){
 void segmentImage(Edge** &edges, std::vector<Component *> &components, int edgeArraySize){
     int totalComponents = components.size();
     std::cout << "Starting Segmentation:\n";
-    int k = 300;
     for(int index =0; index < edgeArraySize; ++index){
         Pixel* pixel1 = edges[index]->n1;
         Pixel* pixel2 = edges[index]->n2;
@@ -23,7 +22,6 @@ void segmentImage(Edge** &edges, std::vector<Component *> &components, int edgeA
                                                        component2->MSTMaxEdge +
                                                                thresholdFunction(component2->pixels.size()));
             if(edges[index]->weight < minimumInternalDifference){
-                std::cout << "Merging Components:\n";
                 setUnion(pixel1, pixel2, components, edges[index]->weight);
             }
         }

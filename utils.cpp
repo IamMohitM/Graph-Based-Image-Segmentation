@@ -72,7 +72,22 @@ std::tuple<Edge**, int> getEdges(const cv::Mat &img, std::vector<Pixel *> &pixel
     return {edges, edgeArraySize};
 }
 
-int partition(Edge** &edges, int startingIndex, int lastIndex){
+int returnMedian(Edge** &edges, int x, int y, int z){
+    if(((edges[y]->weight > edges[x]->weight) && (edges[x]->weight > edges[z]->weight)) ||
+                                                        ((edges[y]->weight < edges[x]->weight) && ( edges[x]->weight < edges[z]->weight))){
+        return x;
+    }
+    else if(((edges[x]->weight > edges[y]->weight) && (edges[y]->weight > edges[z]->weight)) ||
+                                                        ((edges[x]->weight < edges[y]->weight) && ( edges[y]->weight < edges[z]->weight))){
+        return y;
+    }else{
+        return z;
+    }
+}
+
+int partition(Edge** &edges, int startingIndex, int lastIndex, int &count){
+    count += lastIndex-startingIndex;
+//    std::cout << "Starting Index: " << startingIndex << ' ' << "Last Index: " << lastIndex << '\n';
     int pivot = edges[startingIndex]->weight;
     int pivotIndex = startingIndex+1;
     for (int i=startingIndex+1; i < lastIndex; ++i){
@@ -84,13 +99,17 @@ int partition(Edge** &edges, int startingIndex, int lastIndex){
     --pivotIndex;
     std::swap(edges[pivotIndex], edges[startingIndex]);
     return pivotIndex;
-
 }
 
-void quickSort(Edge** &edges, int startingIndex, int lastIndex){
+void quickSort(Edge** &edges, int startingIndex, int lastIndex, int &count){
     if (startingIndex < lastIndex){
-        int pivotIndex = partition(edges, startingIndex, lastIndex);
-        quickSort(edges, startingIndex, pivotIndex);
-        quickSort(edges, pivotIndex+1, lastIndex);
+
+        int centerElement = (startingIndex + lastIndex)/2;
+        int medianElement = returnMedian(edges, startingIndex, centerElement, lastIndex-1);
+        std::swap(edges[startingIndex], edges[medianElement]);
+
+        int pivotIndex = partition(edges, startingIndex, lastIndex, count);
+        quickSort(edges, startingIndex, pivotIndex, count);
+        quickSort(edges, pivotIndex+1, lastIndex, count);
     }
 }

@@ -31,21 +31,33 @@ int main() {
         }
     }
     std::cout << img.rows * img.cols << '\n';
-    std::cout << pixels.size() << '\n';
+    std::cout << "Before Segmentation total pixels: " << pixels.size() << '\n';
     std::cout << allComponents.size() << '\n';
 
     std::cout << checkValidityOfGraph(rows, columns, img, pixels) << '\n';
     auto [edges, edgeArraySize] = getEdges(img, pixels);
 
     std::cout << "Sorting\n";
-
-    quickSort(edges, 0, edgeArraySize);
-
-    for(int i=0; i < edgeArraySize; ++i){
-        std::cout << edges[i]->weight << '\n';
-    }
+    int count = 0;
+    quickSort(edges, 0, edgeArraySize, count);
+    //720062683
+    //422034530
+    std::cout << "Total comparisons: " << count << '\n';
 
     segmentImage(edges, allComponents, edgeArraySize);
+
+    int totalPixels {};
+    for(auto component: allComponents){
+        totalPixels += component->pixels.size();
+    }
+
+    std::cout << "After Segmentation total pixels: " << totalPixels << '\n';
+
+    for(int i=0; i < edgeArraySize; ++i){
+        delete edges[i];
+    }
+    delete edges;
+
     return 0;
 }
 
