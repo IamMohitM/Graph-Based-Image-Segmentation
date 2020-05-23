@@ -20,6 +20,7 @@ struct Component{
     std::vector<Pixel *> pixels;
     int rank = 0;
     Pixel* representative;
+    int MSTMaxEdge = 0;
 };
 
 struct Edge{
@@ -30,6 +31,6 @@ struct Edge{
 
 Component* makeComponent(int row, int col, int intensity);
 inline Component* findSet(Pixel* x);
-void link(Component* x, Component* y, std::vector<Component *> &trees);
-void setUnion(Pixel* x, Pixel* y, std::vector<Component *> &trees);
+void link(Component* x, Component* y, std::vector<Component *> &trees, int MSTMaxEdgeValue);
+void setUnion(Pixel* x, Pixel* y, std::vector<Component *> &trees, int MSTMaxEdgeValue);
 Edge* createEdge(Pixel* pixel1, Pixel* pixel2);

@@ -38,10 +38,11 @@ void removeTree(std::vector<Component *> &allComponents, Component*  component){
     delete component;
 }
 
-void link(Component* x, Component* y, std::vector<Component *> &trees){
+void link(Component* x, Component* y, std::vector<Component *> &trees, int MSTMaxEdgeValue){
     if (x != y) {
         if (x->rank < y->rank) {
             x->representative->parent = y->representative;
+            y->MSTMaxEdge = MSTMaxEdgeValue;
             setParentTree(x, y);
             removeTree(trees, x);
         } else {
@@ -49,14 +50,15 @@ void link(Component* x, Component* y, std::vector<Component *> &trees){
                 ++x->rank;
             }
             y->representative->parent = x->representative->parent;
+            x->MSTMaxEdge = MSTMaxEdgeValue;
             setParentTree(y, x);
             removeTree(trees, y);
         }
     }
 }
 
-void setUnion(Pixel* x, Pixel* y, std::vector<Component *> &trees){
-    link(findSet(x), findSet(y), trees);
+void setUnion(Pixel* x, Pixel* y, std::vector<Component *> &trees, int MSTMaxEdgeValue){
+    link(findSet(x), findSet(y), trees, MSTMaxEdgeValue);
 }
 
 Edge* createEdge(Pixel* pixel1, Pixel* pixel2){
