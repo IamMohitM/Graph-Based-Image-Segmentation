@@ -3,12 +3,14 @@
 #include <opencv2/opencv.hpp>
 #include "DisjointForest.h"
 #include "utils.h"
+#include "segmentation.h"
 
 int main() {
     cv::Mat img = cv::imread("/home/mo/CLionProjects/GraphBasedImageSegmentation/images/eiffel-tower.jpg",
             0);
     std::cout << img.size() << '\n';
     cv::resize(img, img, cv::Size(256, 256));
+    cv::GaussianBlur(img, img, cv::Size(3,3), 0.8);
     std::cout << "After Resize: " << img.size() << '\n';
 
     std::vector<Pixel *> pixels(img.rows*img.cols);
@@ -34,15 +36,18 @@ int main() {
 
     std::cout << checkValidityOfGraph(rows, columns, img, pixels) << '\n';
     auto [edges, edgeArraySize] = getEdges(img, pixels);
-    for(int i=0; i < edgeArraySize; ++i){
-        std::cout << edges[i]->weight << '\n';
-    }
+
     std::cout << "Sorting\n";
+
     quickSort(edges, 0, edgeArraySize);
+
     for(int i=0; i < edgeArraySize; ++i){
         std::cout << edges[i]->weight << '\n';
     }
 
+    segmentImage(edges, allComponents, edgeArraySize);
     return 0;
 }
 
+//TODO: Delete all arrays and elements created with new
+//TODO:: Color the segmentation
