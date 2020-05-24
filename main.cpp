@@ -1,16 +1,20 @@
 #include <iostream>
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include <string>
 #include "DisjointForest.h"
 #include "utils.h"
 #include "segmentation.h"
 
 int main() {
-    cv::Mat img = cv::imread("/home/mo/CLionProjects/GraphBasedImageSegmentation/images/eiffel-tower.jpg",
+    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/view.jpg";
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    cv::Mat img = cv::imread(path,
             0);
     std::cout << img.size() << '\n';
     cv::resize(img, img, cv::Size(256, 256));
     cv::GaussianBlur(img, img, cv::Size(3,3), 0.8);
+
     std::cout << "After Resize: " << img.size() << '\n';
 
     std::vector<Pixel *> pixels(img.rows*img.cols);
@@ -40,8 +44,6 @@ int main() {
     std::cout << "Sorting\n";
     int count = 0;
     quickSort(edges, 0, edgeArraySize, count);
-    //720062683
-    //422034530
     std::cout << "Total comparisons: " << count << '\n';
 
     segmentImage(edges, allComponents, edgeArraySize);
@@ -57,9 +59,28 @@ int main() {
         delete edges[i];
     }
     delete edges;
-
+    int trees = 0;
+    cv::Mat segmentedImage(256, 256, CV_8UC3);
+    for(auto component: allComponents){
+        uchar r=getRandomNumber(0, 255);
+        uchar b=getRandomNumber(0, 255);
+        uchar g=getRandomNumber(0, 255);
+        cv::Vec3b pixelColor= {b ,g ,r};
+        for(auto pixel: component->pixels){
+            segmentedImage.at<cv::Vec3b>(cv::Point(pixel->column,pixel->row)) = pixelColor;
+        }
+        ++trees;
+        std::cout << "Segmented " << trees << " components\n";
+    }
+    cv::Mat segmentedMat(segmentedImage);
+    cv::resize(segmentedMat, segmentedMat, cv::Size(img.rows, img.cols));
+    std::cout << segmentedMat << '\n';
+    std::cout << segmentedMat.size() << '\n';
+    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/view-k_700.jpg", segmentedImage);
+    cv::imshow("Image", segmentedMat);
+    cv::waitKey(0);
     return 0;
 }
 
 //TODO: Delete all arrays and elements created with new
-//TODO:: Color the segmentation
+//TODO: Fix relative Paths

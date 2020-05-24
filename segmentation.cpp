@@ -3,7 +3,7 @@
 #include "DisjointForest.h"
 
 float thresholdFunction(float componentSize){
-    float k = 300;
+    float k = 700;
     return k/componentSize;
 }
 
