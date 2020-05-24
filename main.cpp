@@ -55,10 +55,6 @@ int main() {
 
     std::cout << "After Segmentation total pixels: " << totalPixels << '\n';
 
-    for(int i=0; i < edgeArraySize; ++i){
-        delete edges[i];
-    }
-    delete edges;
     int trees = 0;
     cv::Mat segmentedImage(256, 256, CV_8UC3);
     for(auto component: allComponents){
@@ -79,8 +75,12 @@ int main() {
     cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/view-k_700.jpg", segmentedImage);
     cv::imshow("Image", segmentedMat);
     cv::waitKey(0);
+
+    for(int i=0; i < edgeArraySize; ++i){
+        delete edges[i];
+    }
+    delete edges;
     return 0;
 }
 
-//TODO: Delete all arrays and elements created with new
 //TODO: Fix relative Paths
