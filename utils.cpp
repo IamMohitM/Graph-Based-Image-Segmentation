@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <tuple>
+#include <cstdlib>
 #include "DisjointForest.h"
 
 int getSingleIndex(const int row,const int col,const int totalColumns){
@@ -112,4 +113,12 @@ void quickSort(Edge** &edges, int startingIndex, int lastIndex, int &count){
         quickSort(edges, startingIndex, pivotIndex, count);
         quickSort(edges, pivotIndex+1, lastIndex, count);
     }
+}
+
+int getRandomNumber(int min, int max)
+{
+    //from learncpp.com
+    static constexpr double fraction { 1.0 / (RAND_MAX + 1.0) };  // static used for efficiency, so we only calculate this value once
+    // evenly distribute the random number across our range
+    return min + static_cast<int>((max - min + 1) * (std::rand() * fraction));
 }

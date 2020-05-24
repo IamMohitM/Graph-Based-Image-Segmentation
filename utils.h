@@ -3,3 +3,4 @@ bool checkValidityOfGraph(int rows, int cols, const cv::Mat &img, const std::vec
 std::tuple<Edge**, int> getEdges(const cv::Mat &img, std::vector<Pixel *> &pixels);
 void quickSort(Edge** &edges, int startingIndex, int lastIndex);
 void quickSort(Edge** &edges, int startingIndex, int lastIndex, int &count);
+int getRandomNumber(int min, int max);
