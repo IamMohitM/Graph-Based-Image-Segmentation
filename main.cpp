@@ -7,7 +7,7 @@
 #include "segmentation.h"
 
 int main() {
-    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/eiffel-tower.jpg";
+    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/indoor_scene.png";
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     cv::Mat img = cv::imread(path,
             0);
@@ -70,9 +70,8 @@ int main() {
     }
     cv::Mat segmentedMat(segmentedImage);
     cv::resize(segmentedMat, segmentedMat, cv::Size(img.rows, img.cols));
-    std::cout << segmentedMat << '\n';
     std::cout << segmentedMat.size() << '\n';
-    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/eiffel-tower-320X240-k_300.jpg", segmentedImage);
+    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/indoor_scene-k300-min20.jpg", segmentedImage);
     cv::imshow("Image", segmentedMat);
     cv::waitKey(0);
 
