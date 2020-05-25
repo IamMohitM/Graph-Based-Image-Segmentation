@@ -7,12 +7,12 @@
 #include "segmentation.h"
 
 int main() {
-    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/view.jpg";
+    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/eiffel-tower.jpg";
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     cv::Mat img = cv::imread(path,
             0);
     std::cout << img.size() << '\n';
-    cv::resize(img, img, cv::Size(256, 256));
+    cv::resize(img, img, cv::Size(320, 240));
     cv::GaussianBlur(img, img, cv::Size(3,3), 0.8);
 
     std::cout << "After Resize: " << img.size() << '\n';
@@ -56,7 +56,7 @@ int main() {
     std::cout << "After Segmentation total pixels: " << totalPixels << '\n';
 
     int trees = 0;
-    cv::Mat segmentedImage(256, 256, CV_8UC3);
+    cv::Mat segmentedImage(img.rows, img.cols, CV_8UC3);
     for(auto component: allComponents){
         uchar r=getRandomNumber(0, 255);
         uchar b=getRandomNumber(0, 255);
@@ -72,7 +72,7 @@ int main() {
     cv::resize(segmentedMat, segmentedMat, cv::Size(img.rows, img.cols));
     std::cout << segmentedMat << '\n';
     std::cout << segmentedMat.size() << '\n';
-    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/view-k_700.jpg", segmentedImage);
+    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/eiffel-tower-320X240-k_300.jpg", segmentedImage);
     cv::imshow("Image", segmentedMat);
     cv::waitKey(0);
 
