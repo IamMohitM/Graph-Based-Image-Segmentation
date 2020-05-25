@@ -5,3 +5,4 @@ void quickSort(Edge** &edges, int startingIndex, int lastIndex);
 void quickSort(Edge** &edges, int startingIndex, int lastIndex, int &count);
 int getRandomNumber(int min, int max);
 Edge** countSort(Edge** &edges, int edgeArraySize, int maxValue);
+cv::Mat addColorToSegmentation(std::vector<Component *> &allComponents, int rows, int columns);

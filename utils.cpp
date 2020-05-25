@@ -142,3 +142,19 @@ Edge** countSort(Edge** &edges, int edgeArraySize, int maxValue){
 
     return sortedEdges;
 }
+
+cv::Mat addColorToSegmentation(std::vector<Component *> &allComponents, int rows, int columns){
+    cv::Mat segmentedImage(rows, columns, CV_8UC3);
+    for(auto component: allComponents){
+        uchar r=getRandomNumber(0, 255);
+        uchar b=getRandomNumber(0, 255);
+        uchar g=getRandomNumber(0, 255);
+        cv::Vec3b pixelColor= {b ,g ,r};
+        for(auto pixel: component->pixels){
+            segmentedImage.at<cv::Vec3b>(cv::Point(pixel->column,pixel->row)) = pixelColor;
+        }
+    }
+    cv::Mat segmentedMat(segmentedImage);
+    cv::resize(segmentedMat, segmentedMat, cv::Size(rows, columns));
+    return segmentedMat;
+}

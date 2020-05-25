@@ -7,7 +7,7 @@
 #include "segmentation.h"
 
 int main() {
-    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/indoor_scene.png";
+    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/paris.jpg";
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     cv::Mat img = cv::imread(path,
             0);
@@ -42,45 +42,21 @@ int main() {
     auto [edges, edgeArraySize] = getEdges(img, pixels);
 
     std::cout << "Sorting\n";
-    int count = 0;
-//    quickSort(edges, 0, edgeArraySize, count);
 
     Edge** sortedEdges = countSort(edges, edgeArraySize, 255);
-//    std::cout << "Total comparisons: " << count << '\n';
     delete[] edges;
     segmentImage(sortedEdges, allComponents, edgeArraySize);
-    int totalPixels {};
-    for(auto component: allComponents){
-        totalPixels += component->pixels.size();
-    }
-
-    std::cout << "After Segmentation total pixels: " << totalPixels << '\n';
-
-    int trees = 0;
-    cv::Mat segmentedImage(img.rows, img.cols, CV_8UC3);
-    for(auto component: allComponents){
-        uchar r=getRandomNumber(0, 255);
-        uchar b=getRandomNumber(0, 255);
-        uchar g=getRandomNumber(0, 255);
-        cv::Vec3b pixelColor= {b ,g ,r};
-        for(auto pixel: component->pixels){
-            segmentedImage.at<cv::Vec3b>(cv::Point(pixel->column,pixel->row)) = pixelColor;
-        }
-        ++trees;
-        std::cout << "Segmented " << trees << " components\n";
-    }
-    cv::Mat segmentedMat(segmentedImage);
-    cv::resize(segmentedMat, segmentedMat, cv::Size(img.rows, img.cols));
-    std::cout << segmentedMat.size() << '\n';
-    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/indoor_scene-k300-min20.jpg", segmentedImage);
-    cv::imshow("Image", segmentedMat);
+    cv::Mat segmentedImage = addColorToSegmentation(allComponents, img.rows, img.cols);
+//    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/indoor_scene-k300-min20.jpg", segmentedImage);
+    cv::imshow("Image", segmentedImage);
     cv::waitKey(0);
 
-    for(int i=0; i < edgeArraySize; ++i){
-        delete edges[i];
-    }
 
+    for(int i=0; i < edgeArraySize; ++i){
+        delete sortedEdges[i];
+    }
     delete[] sortedEdges;
+
     return 0;
 }
 
