@@ -43,11 +43,12 @@ int main() {
 
     std::cout << "Sorting\n";
     int count = 0;
-    quickSort(edges, 0, edgeArraySize, count);
-    std::cout << "Total comparisons: " << count << '\n';
+//    quickSort(edges, 0, edgeArraySize, count);
 
-    segmentImage(edges, allComponents, edgeArraySize);
-
+    Edge** sortedEdges = countSort(edges, edgeArraySize, 255);
+//    std::cout << "Total comparisons: " << count << '\n';
+    delete[] edges;
+    segmentImage(sortedEdges, allComponents, edgeArraySize);
     int totalPixels {};
     for(auto component: allComponents){
         totalPixels += component->pixels.size();
@@ -78,7 +79,8 @@ int main() {
     for(int i=0; i < edgeArraySize; ++i){
         delete edges[i];
     }
-    delete edges;
+
+    delete[] sortedEdges;
     return 0;
 }
 

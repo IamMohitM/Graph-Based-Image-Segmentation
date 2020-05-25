@@ -122,3 +122,23 @@ int getRandomNumber(int min, int max)
     // evenly distribute the random number across our range
     return min + static_cast<int>((max - min + 1) * (std::rand() * fraction));
 }
+
+Edge** countSort(Edge** &edges, int edgeArraySize, int maxValue){
+    Edge** sortedEdges = new Edge*[edgeArraySize];
+    std::vector<int> countArray(maxValue + 1);
+
+    for(int i=0; i<edgeArraySize;++i){
+        countArray[edges[i]->weight] += 1;
+    }
+
+    for(int i=1; i<countArray.size();++i){
+        countArray[i]+=countArray[i-1];
+    }
+
+    for(int j=edgeArraySize-1; j>=0; --j){
+        sortedEdges[countArray[edges[j]->weight]-1] = edges[j];
+        countArray[edges[j]->weight] -= 1;
+    }
+
+    return sortedEdges;
+}

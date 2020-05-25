@@ -4,3 +4,4 @@ std::tuple<Edge**, int> getEdges(const cv::Mat &img, std::vector<Pixel *> &pixel
 void quickSort(Edge** &edges, int startingIndex, int lastIndex);
 void quickSort(Edge** &edges, int startingIndex, int lastIndex, int &count);
 int getRandomNumber(int min, int max);
+Edge** countSort(Edge** &edges, int edgeArraySize, int maxValue);
