@@ -155,6 +155,5 @@ cv::Mat addColorToSegmentation(std::vector<Component *> &allComponents, int rows
         }
     }
     cv::Mat segmentedMat(segmentedImage);
-    cv::resize(segmentedMat, segmentedMat, cv::Size(rows, columns));
     return segmentedMat;
 }
