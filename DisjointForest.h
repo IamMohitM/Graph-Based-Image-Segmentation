@@ -27,7 +27,7 @@ struct Component{
 };
 
 struct Edge{
-    int weight;
+    double weight;
     Pixel* n1;
     Pixel* n2;
 };

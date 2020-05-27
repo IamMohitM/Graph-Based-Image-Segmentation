@@ -6,10 +6,10 @@
 #include "segmentation.h"
 
 int main() {
-    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/paris.jpg";
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    cv::Mat img = cv::imread(path,
-            0);
+    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/bridge.jpg";
+    srand(static_cast<unsigned int>(std::time(nullptr)));
+    cv::Mat img = cv::imread(path, 1);
+    std::cout << img.channels() << '\n';
     std::cout << img.size() << '\n';
     cv::resize(img, img, cv::Size(320, 240));
     cv::GaussianBlur(img, img, cv::Size(3,3), 0.8);
@@ -26,8 +26,10 @@ int main() {
     {
         for(int column=0; column < columns; column++)
         {
-            cv::Vec3b pixelValue = img.at<uchar>(row, column);
-            Component* component=makeComponent(row, column, pixelValue.val[0], pixelValue.val[1], pixelValue.val[2]);
+            cv::Vec3b pixelValue = img.at<cv::Vec3b>(row, column);
+            Component* component=makeComponent(row, column, pixelValue.val[0],
+                                               pixelValue.val[1],
+                                               pixelValue.val[2]);
             index = getSingleIndex(row, column, columns);
             pixels[index] = component->pixels.at(0);
             allComponents[index] = component;
@@ -38,7 +40,8 @@ int main() {
     std::cout << allComponents.size() << '\n';
 
 //    std::cout << checkValidityOfGraph(rows, columns, img, pixels) << '\n';
-//    auto [edges, edgeArraySize] = getEdges(img, pixels);
+    auto [edges, edgeArraySize] = getEdges(img, pixels);
+
 //
 //    std::cout << "Sorting\n";
 //
