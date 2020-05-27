@@ -43,8 +43,11 @@ int main() {
     auto [edges, edgeArraySize] = getEdges(img, pixels);
 
 //
-//    std::cout << "Sorting\n";
-//
+    std::cout << "Sorting\n";
+    int count = 0;
+    quickSort(edges, 0, edgeArraySize, count);
+    std:: cout << "Total Comparisons: " << count << '\n';
+
 //    Edge** sortedEdges = countSort(edges, edgeArraySize, 255);
 //    delete[] edges;
 //    segmentImage(sortedEdges, allComponents, edgeArraySize);

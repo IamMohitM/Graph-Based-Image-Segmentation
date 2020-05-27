@@ -89,7 +89,7 @@ int returnMedian(Edge** &edges, int x, int y, int z){
 int partition(Edge** &edges, int startingIndex, int lastIndex, int &count){
     count += lastIndex-startingIndex;
 //    std::cout << "Starting Index: " << startingIndex << ' ' << "Last Index: " << lastIndex << '\n';
-    int pivot = edges[startingIndex]->weight;
+    double pivot = edges[startingIndex]->weight;
     int pivotIndex = startingIndex+1;
     for (int i=startingIndex+1; i < lastIndex; ++i){
         if (edges[i]->weight < pivot){
