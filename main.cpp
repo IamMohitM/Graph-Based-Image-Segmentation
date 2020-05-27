@@ -6,7 +6,7 @@
 #include "segmentation.h"
 
 int main() {
-    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/bridge.jpg";
+    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/eiffel-tower.jpg";
     srand(static_cast<unsigned int>(std::time(nullptr)));
     cv::Mat img = cv::imread(path, 1);
     std::cout << img.channels() << '\n';
@@ -50,17 +50,17 @@ int main() {
 
 //    Edge** sortedEdges = countSort(edges, edgeArraySize, 255);
 //    delete[] edges;
-//    segmentImage(sortedEdges, allComponents, edgeArraySize);
-//    cv::Mat segmentedImage = addColorToSegmentation(allComponents, img.rows, img.cols);
-////    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/indoor_scene-k300-min20.jpg", segmentedImage);
-//    cv::imshow("Image", segmentedImage);
-//    cv::waitKey(0);
+    segmentImage(edges, allComponents, edgeArraySize);
+    cv::Mat segmentedImage = addColorToSegmentation(allComponents, img.rows, img.cols);
+    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/eiffel-tower-rgb-k700-min20.jpg", segmentedImage);
+    cv::imshow("Image", segmentedImage);
+    cv::waitKey(0);
 //
 //
-//    for(int i=0; i < edgeArraySize; ++i){
-//        delete sortedEdges[i];
-//    }
-//    delete[] sortedEdges;
+    for(int i=0; i < edgeArraySize; ++i){
+        delete edges[i];
+    }
+    delete[] edges;
 
     return 0;
 }
