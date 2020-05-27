@@ -12,6 +12,9 @@ struct Pixel{
     Component* parentTree;
     Pixel* parent;
     int intensity;
+    int bValue;
+    int gValue;
+    int rValue;
     int row;
     int column;
 };
@@ -29,7 +32,7 @@ struct Edge{
     Pixel* n2;
 };
 
-Component* makeComponent(int row, int col, int intensity);
+Component* makeComponent(int row, int col, int bValue, int gValue, int rValue);
 inline Component* findSet(Pixel* x);
 void link(Component* x, Component* y, std::vector<Component *> &trees, int MSTMaxEdgeValue);
 void setUnion(Pixel* x, Pixel* y, std::vector<Component *> &trees, int MSTMaxEdgeValue);

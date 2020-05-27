@@ -4,10 +4,13 @@
 #include "DisjointForest.h"
 #include <iostream>
 
-Component* makeComponent(const int row, const int column, const int intensity){
+Component* makeComponent(const int row, const int column, const int bValue, const int gValue, const int rValue){
     auto* component = new Component;
     auto* pixel = new Pixel;
-    pixel->intensity = intensity;
+//    pixel->intensity = intensity;
+    pixel->bValue = bValue;
+    pixel->gValue = gValue;
+    pixel->rValue = rValue;
     pixel->row = row;
     pixel->column = column;
     pixel->parent = pixel;

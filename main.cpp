@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include <opencv2/opencv.hpp>
 #include <string>
 #include "DisjointForest.h"
@@ -27,8 +26,8 @@ int main() {
     {
         for(int column=0; column < columns; column++)
         {
-            int pixelValue = static_cast<int>(img.at<uchar>(row, column));
-            Component* component=makeComponent(row, column, pixelValue);
+            cv::Vec3b pixelValue = img.at<uchar>(row, column);
+            Component* component=makeComponent(row, column, pixelValue.val[0], pixelValue.val[1], pixelValue.val[2]);
             index = getSingleIndex(row, column, columns);
             pixels[index] = component->pixels.at(0);
             allComponents[index] = component;
@@ -38,24 +37,24 @@ int main() {
     std::cout << "Before Segmentation total pixels: " << pixels.size() << '\n';
     std::cout << allComponents.size() << '\n';
 
-    std::cout << checkValidityOfGraph(rows, columns, img, pixels) << '\n';
-    auto [edges, edgeArraySize] = getEdges(img, pixels);
-
-    std::cout << "Sorting\n";
-
-    Edge** sortedEdges = countSort(edges, edgeArraySize, 255);
-    delete[] edges;
-    segmentImage(sortedEdges, allComponents, edgeArraySize);
-    cv::Mat segmentedImage = addColorToSegmentation(allComponents, img.rows, img.cols);
-//    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/indoor_scene-k300-min20.jpg", segmentedImage);
-    cv::imshow("Image", segmentedImage);
-    cv::waitKey(0);
-
-
-    for(int i=0; i < edgeArraySize; ++i){
-        delete sortedEdges[i];
-    }
-    delete[] sortedEdges;
+//    std::cout << checkValidityOfGraph(rows, columns, img, pixels) << '\n';
+//    auto [edges, edgeArraySize] = getEdges(img, pixels);
+//
+//    std::cout << "Sorting\n";
+//
+//    Edge** sortedEdges = countSort(edges, edgeArraySize, 255);
+//    delete[] edges;
+//    segmentImage(sortedEdges, allComponents, edgeArraySize);
+//    cv::Mat segmentedImage = addColorToSegmentation(allComponents, img.rows, img.cols);
+////    cv::imwrite("/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/indoor_scene-k300-min20.jpg", segmentedImage);
+//    cv::imshow("Image", segmentedImage);
+//    cv::waitKey(0);
+//
+//
+//    for(int i=0; i < edgeArraySize; ++i){
+//        delete sortedEdges[i];
+//    }
+//    delete[] sortedEdges;
 
     return 0;
 }
