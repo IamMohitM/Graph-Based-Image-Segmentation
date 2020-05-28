@@ -10,8 +10,13 @@
 int main() {
     float gaussianBlur = 0.8;
     int minimumComponentSize = 100;
-    float kValue = 2000;
-    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/BigTree.jpg";
+    float kValue = 1000;
+    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/view.jpg";
+    std::vector<std::string> pathSplit = split(path, '/');
+    std::string fileName = pathSplit[pathSplit.size()-1];
+    std::vector<std::string> fileNameSplit = split(fileName, '.');
+    std::string baseFileName = fileNameSplit[0];
+    std::cout << "Filename: " << fileName << '\n';
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     cv::Mat img = cv::imread(path,0);
     std::cout << img.size() << '\n';
@@ -64,8 +69,13 @@ int main() {
         firstComponentStruct = firstComponentStruct->previousComponentStruct;
     }
 
+    std::string outputPath = "/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/"+baseFileName+"-k"+
+                              std::to_string(static_cast<int>(kValue))+'-'+std::to_string(gaussianBlur)+"-"
+                              "min"+std::to_string(static_cast<int>(minimumComponentSize))+".jpg";
+    std::cout << "Image saved as: " << outputPath << '\n';
     cv::Mat segmentedImage = addColorToSegmentation(firstComponentStruct, img.rows, img.cols);
     cv::imshow("Image", segmentedImage);
+    cv::imwrite(outputPath, segmentedImage);
     cv::waitKey(0);
 
     return 0;
