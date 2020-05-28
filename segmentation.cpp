@@ -12,9 +12,9 @@ void segmentImage(std::vector<Edge *> &edges, int &totalComponents, int minimumC
     Pixel* pixel2;
     Component* component1;
     Component* component2;
-    for(int index =0; index < edges.size(); ++index){
-        pixel1 = edges[index]->n1;
-        pixel2 = edges[index]->n2;
+    for(Edge* edge: edges){
+        pixel1 = edge->n1;
+        pixel2 = edge->n2;
 
         component1 = pixel1->parentTree;
         component2 = pixel2->parentTree;
@@ -23,8 +23,8 @@ void segmentImage(std::vector<Edge *> &edges, int &totalComponents, int minimumC
                                                                thresholdFunction(component1->pixels.size(), kValue),
                                                        component2->MSTMaxEdge +
                                                                thresholdFunction(component2->pixels.size(), kValue));
-            if(edges[index]->weight < minimumInternalDifference){
-                mergeComponents(component1, component2,  edges[index]->weight);
+            if(edge->weight < minimumInternalDifference){
+                mergeComponents(component1, component2,  edge->weight);
                 --totalComponents;
             }
         }
@@ -34,15 +34,15 @@ void segmentImage(std::vector<Edge *> &edges, int &totalComponents, int minimumC
     std::cout << "Before Post Processing Total Components: " << totalComponents << '\n';
 
 //    post-processing:
-    for(int index =0; index < edges.size(); ++index){
-        pixel1 = edges[index]->n1;
-        pixel2 = edges[index]->n2;
+    for(Edge* edge: edges){
+        pixel1 = edge->n1;
+        pixel2 = edge->n2;
 
         component1 = pixel1->parentTree;
         component2 = pixel2->parentTree;
         if((component1!=component2)&&(component1->pixels.size()<minimumComponentSize) ||
                                         component2->pixels.size()<minimumComponentSize){
-            mergeComponents(component1, component2, edges[index]->weight);
+            mergeComponents(component1, component2, edge->weight);
             --totalComponents;
         }
     }

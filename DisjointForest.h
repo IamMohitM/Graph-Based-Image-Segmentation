@@ -39,8 +39,5 @@ struct ComponentStruct{
 };
 
 Component* makeComponent(int row, int col, int intensity);
-inline Component* findSet(Pixel* x);
-void link(Component* x, Component* y, std::vector<Component *> &trees, int MSTMaxEdgeValue);
-void setUnion(Pixel* x, Pixel* y, std::vector<Component *> &trees, int MSTMaxEdgeValue);
 Edge* createEdge(Pixel* pixel1, Pixel* pixel2);
 void mergeComponents(Component* x, Component* y, int MSTMaxEdgeValue);

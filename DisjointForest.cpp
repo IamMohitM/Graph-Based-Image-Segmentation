@@ -28,10 +28,6 @@ void setParentTree(Component* childTreePointer, Component* parentTreePointer){
     }
 }
 
-void setUnion(Pixel* x, Pixel* y, std::vector<Component *> &trees, int MSTMaxEdgeValue){
-    link(findSet(x), findSet(y), trees, MSTMaxEdgeValue);
-}
-
 Edge* createEdge(Pixel* pixel1, Pixel* pixel2){
     Edge* edge = new Edge;
     edge->weight = abs(pixel1->intensity - pixel2 ->intensity);
