@@ -1,29 +1,10 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
-#include <tuple>
 #include <cstdlib>
 #include "DisjointForest.h"
 
 int getSingleIndex(const int row,const int col,const int totalColumns){
     return (row*totalColumns) + col;
-}
-
-bool checkValidityOfGraph(const int rows, const int cols, const cv::Mat &img, const std::vector<Pixel *> &pixels){
-    int count = 0;
-    for(int row=0; row < rows; row++)
-    {
-        for(int column=0; column < cols; column++)
-        {
-            int pixelValue = static_cast<int>(img.at<uchar>(row, column));
-            if(pixels[getSingleIndex(row, column, cols)]->intensity == pixelValue){
-                ++count;
-            }
-            else{
-                std::cout << "Something might have gone wrong\n";
-            }
-        }
-    }
-    return count==(rows*cols);
 }
 
 int getEdgeArraySize(int rows, int columns){
@@ -34,14 +15,12 @@ int getEdgeArraySize(int rows, int columns){
     return firstColumn + lastColumn + middleValues + lastRow;
 }
 
-std::tuple<Edge**, int> getEdges(const cv::Mat &img, std::vector<Pixel *> &pixels){
+void setEdges(const cv::Mat &img, std::vector<Pixel *> &pixels, std::vector<Edge*> &edges){
     int rows = img.rows;
     int columns = img.cols;
     int edgeCount = 0;
-    int edgeArraySize = getEdgeArraySize(rows, columns);
-    Edge** edges = new Edge*[edgeArraySize];
-    for(int row=0; row < rows; ++row){
-        for(int column=0; column < columns; ++column) {
+    for(int row=0; row < img.rows; ++row){
+        for(int column=0; column < img.cols; ++column) {
             Pixel* presentPixel = pixels[getSingleIndex(row, column, columns)];
             if(row < rows - 1){
                 if(column == 0){
@@ -66,12 +45,9 @@ std::tuple<Edge**, int> getEdges(const cv::Mat &img, std::vector<Pixel *> &pixel
             }
         }
     }
-
     std::cout << "Total Edges: "<< edgeCount << '\n';
-    std::cout << "Array Size: " << edgeArraySize << '\n';
-
-    return {edges, edgeArraySize};
 }
+
 
 int returnMedian(Edge** &edges, int x, int y, int z){
     if(((edges[y]->weight > edges[x]->weight) && (edges[x]->weight > edges[z]->weight)) ||
@@ -118,42 +94,26 @@ void quickSort(Edge** &edges, int startingIndex, int lastIndex, int &count){
 int getRandomNumber(int min, int max)
 {
     //from learncpp.com
-    static constexpr double fraction { 1.0 / (RAND_MAX + 1.0) };  // static used for efficiency, so we only calculate this value once
-    // evenly distribute the random number across our range
+    static constexpr double fraction { 1.0 / (RAND_MAX + 1.0) };
     return min + static_cast<int>((max - min + 1) * (std::rand() * fraction));
 }
 
-Edge** countSort(Edge** &edges, int edgeArraySize, int maxValue){
-    Edge** sortedEdges = new Edge*[edgeArraySize];
-    std::vector<int> countArray(maxValue + 1);
 
-    for(int i=0; i<edgeArraySize;++i){
-        countArray[edges[i]->weight] += 1;
-    }
-
-    for(int i=1; i<countArray.size();++i){
-        countArray[i]+=countArray[i-1];
-    }
-
-    for(int j=edgeArraySize-1; j>=0; --j){
-        sortedEdges[countArray[edges[j]->weight]-1] = edges[j];
-        countArray[edges[j]->weight] -= 1;
-    }
-
-    return sortedEdges;
-}
-
-cv::Mat addColorToSegmentation(std::vector<Component *> &allComponents, int rows, int columns){
+cv::Mat addColorToSegmentation(ComponentStruct* componentStruct, int rows, int columns){
     cv::Mat segmentedImage(rows, columns, CV_8UC3);
-    for(auto component: allComponents){
+    do{
         uchar r=getRandomNumber(0, 255);
         uchar b=getRandomNumber(0, 255);
         uchar g=getRandomNumber(0, 255);
         cv::Vec3b pixelColor= {b ,g ,r};
-        for(auto pixel: component->pixels){
+        for(auto pixel: componentStruct->component->pixels){
             segmentedImage.at<cv::Vec3b>(cv::Point(pixel->column,pixel->row)) = pixelColor;
         }
-    }
-    cv::Mat segmentedMat(segmentedImage);
-    return segmentedMat;
+        componentStruct = componentStruct->nextComponentStruct;
+    }while(componentStruct);
+    return segmentedImage;
+}
+
+bool compareEdges(Edge* e1, Edge* e2){
+    return e1->weight < e2->weight;
 }

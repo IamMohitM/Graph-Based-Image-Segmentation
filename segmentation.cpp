@@ -2,49 +2,50 @@
 #include <vector>
 #include "DisjointForest.h"
 
-float thresholdFunction(float componentSize){
-    float k = 300;
+inline float thresholdFunction(float componentSize, float k){
     return k/componentSize;
 }
 
-void segmentImage(Edge** &edges, std::vector<Component *> &components, int edgeArraySize){
-    int minimumComponentSize = 20;
-    int totalComponents = components.size();
+void segmentImage(std::vector<Edge *> &edges, int &totalComponents, int minimumComponentSize, float kValue) {
     std::cout << "Starting Segmentation:\n";
-    for(int index =0; index < edgeArraySize; ++index){
-        Pixel* pixel1 = edges[index]->n1;
-        Pixel* pixel2 = edges[index]->n2;
+    Pixel* pixel1;
+    Pixel* pixel2;
+    Component* component1;
+    Component* component2;
+    for(int index =0; index < edges.size(); ++index){
+        pixel1 = edges[index]->n1;
+        pixel2 = edges[index]->n2;
 
-        Component* component1 = findSet(pixel1);
-        Component* component2 = findSet(pixel2);
+        component1 = pixel1->parentTree;
+        component2 = pixel2->parentTree;
         if(component1!=component2){
             float minimumInternalDifference = std::min(component1->MSTMaxEdge +
-                                                               thresholdFunction(component1->pixels.size()),
+                                                               thresholdFunction(component1->pixels.size(), kValue),
                                                        component2->MSTMaxEdge +
-                                                               thresholdFunction(component2->pixels.size()));
+                                                               thresholdFunction(component2->pixels.size(), kValue));
             if(edges[index]->weight < minimumInternalDifference){
-                setUnion(pixel1, pixel2, components, edges[index]->weight);
+                mergeComponents(component1, component2,  edges[index]->weight);
+                --totalComponents;
             }
         }
     }
 
-    std::cout << "Before Segmentation Total Components: " << totalComponents << '\n';
     std::cout << "Segmentation Done\n";
-    std::cout << "Before Post Processing Total Components: " << components.size() << '\n';
+    std::cout << "Before Post Processing Total Components: " << totalComponents << '\n';
 
-    //post-processing:
-    for(int index =0; index < edgeArraySize; ++index){
-        Pixel* pixel1 = edges[index]->n1;
-        Pixel* pixel2 = edges[index]->n2;
+//    post-processing:
+    for(int index =0; index < edges.size(); ++index){
+        pixel1 = edges[index]->n1;
+        pixel2 = edges[index]->n2;
 
-        Component* component1 = findSet(pixel1);
-        Component* component2 = findSet(pixel2);
+        component1 = pixel1->parentTree;
+        component2 = pixel2->parentTree;
         if((component1!=component2)&&(component1->pixels.size()<minimumComponentSize) ||
                                         component2->pixels.size()<minimumComponentSize){
-            link(component1, component2, components, edges[index]->weight);
+            mergeComponents(component1, component2, edges[index]->weight);
+            --totalComponents;
         }
     }
 
-
-    std::cout << "After Post Processing Total Components: " << components.size() << '\n';
+    std::cout << "After Post Processing Total Components: " << totalComponents << '\n';
 }

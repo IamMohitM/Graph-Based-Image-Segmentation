@@ -1,2 +1,2 @@
 
-void segmentImage(Edge** &edges, std::vector<Component *> &components, int edgeArraySize);
+void segmentImage(std::vector<Edge *> &edges, int &totalComponents, int minimumComponentSize, float kValue) ;
