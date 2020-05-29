@@ -22,6 +22,14 @@ std::vector<std::string> split(const std::string& s, char seperator)
     return output;
 }
 
+std::string getFileNameFromPath(std::string &path){
+    std::vector<std::string> pathSplit = split(path, '/');
+    std::string fileName = pathSplit[pathSplit.size()-1];
+    std::vector<std::string> fileNameSplit = split(fileName, '.');
+    std::string baseFileName = fileNameSplit[0];
+    return baseFileName;
+}
+
 int getEdgeArraySize(int rows, int columns){
     int firstColumn = 3 * (rows-1);
     int lastColumn = 2 * (rows - 1);

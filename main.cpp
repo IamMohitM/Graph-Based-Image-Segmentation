@@ -10,17 +10,16 @@
 int main() {
     float gaussianBlur = 0.8;
     int minimumComponentSize = 100;
-    float kValue = 1000;
-    std::string path =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/view.jpg";
-    std::vector<std::string> pathSplit = split(path, '/');
-    std::string fileName = pathSplit[pathSplit.size()-1];
-    std::vector<std::string> fileNameSplit = split(fileName, '.');
-    std::string baseFileName = fileNameSplit[0];
-    std::cout << "Filename: " << fileName << '\n';
+    float kValue = 750;
+    std::string inputPath =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/eiffel-tower.jpg";
+    std::string outputFolder = "/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/";
+    std::string baseFileName = getFileNameFromPath(inputPath);
+    std::cout << "Filename: " << baseFileName << '\n';
+
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    cv::Mat img = cv::imread(path,0);
+    cv::Mat img = cv::imread(inputPath, 0);
     std::cout << img.size() << '\n';
-    cv::GaussianBlur(img, img, cv::Size(3,3), gaussianBlur);
+    cv::GaussianBlur(img, img, cv::Size(5,5), gaussianBlur);
 
     std::cout << "After Resize: " << img.size() << '\n';
 
@@ -69,7 +68,7 @@ int main() {
         firstComponentStruct = firstComponentStruct->previousComponentStruct;
     }
 
-    std::string outputPath = "/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/"+baseFileName+"-k"+
+    std::string outputPath = outputFolder+baseFileName+"-k"+
                               std::to_string(static_cast<int>(kValue))+'-'+std::to_string(gaussianBlur)+"-"
                               "min"+std::to_string(static_cast<int>(minimumComponentSize))+".jpg";
     std::cout << "Image saved as: " << outputPath << '\n';
