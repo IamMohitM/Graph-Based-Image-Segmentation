@@ -38,6 +38,36 @@ int getEdgeArraySize(int rows, int columns){
     return firstColumn + lastColumn + middleValues + lastRow;
 }
 
+std::tuple<ComponentStruct*, std::vector<Pixel *>> constructImageGraph(cv::Mat& img, int rows, int columns){
+    std::vector<Pixel *> pixels(rows*columns);
+    Component* firstComponent = makeComponent(0, 0, static_cast<int>(img.at<uchar>(0, 0)));
+    auto* firstComponentStruct = new ComponentStruct;
+    firstComponentStruct->component = firstComponent;
+    auto previousComponentStruct = firstComponentStruct;
+    int index;
+
+    for(int row=0; row < rows; row++)
+    {
+        for(int column=0; column < columns; column++)
+        {
+            int pixelValue = static_cast<int>(img.at<uchar>(row, column));
+            Component* component=makeComponent(row, column, pixelValue);
+            auto* newComponentStruct = new ComponentStruct;// = new ComponentStruct;
+            newComponentStruct->component = component;
+            newComponentStruct->previousComponentStruct = previousComponentStruct;
+            previousComponentStruct->nextComponentStruct = newComponentStruct;
+            component->parentComponentStruct = newComponentStruct;
+            previousComponentStruct = newComponentStruct;
+            index = getSingleIndex(row, column, columns);
+            pixels[index] = component->pixels.at(0);
+        }
+    }
+    firstComponentStruct = firstComponentStruct->nextComponentStruct;
+    delete firstComponentStruct->previousComponentStruct;
+    firstComponentStruct->previousComponentStruct = nullptr;
+    return {firstComponentStruct, pixels};
+}
+
 void setEdges(const cv::Mat &img, std::vector<Pixel *> &pixels, std::vector<Edge*> &edges){
     int rows = img.rows;
     int columns = img.cols;
@@ -71,47 +101,8 @@ void setEdges(const cv::Mat &img, std::vector<Pixel *> &pixels, std::vector<Edge
     std::cout << "Total Edges: "<< edgeCount << '\n';
 }
 
-
-int returnMedian(Edge** &edges, int x, int y, int z){
-    if(((edges[y]->weight > edges[x]->weight) && (edges[x]->weight > edges[z]->weight)) ||
-                                                        ((edges[y]->weight < edges[x]->weight) && ( edges[x]->weight < edges[z]->weight))){
-        return x;
-    }
-    else if(((edges[x]->weight > edges[y]->weight) && (edges[y]->weight > edges[z]->weight)) ||
-                                                        ((edges[x]->weight < edges[y]->weight) && ( edges[y]->weight < edges[z]->weight))){
-        return y;
-    }else{
-        return z;
-    }
-}
-
-int partition(Edge** &edges, int startingIndex, int lastIndex, int &count){
-    count += lastIndex-startingIndex;
-//    std::cout << "Starting Index: " << startingIndex << ' ' << "Last Index: " << lastIndex << '\n';
-    int pivot = edges[startingIndex]->weight;
-    int pivotIndex = startingIndex+1;
-    for (int i=startingIndex+1; i < lastIndex; ++i){
-        if (edges[i]->weight < pivot){
-            std::swap(edges[pivotIndex], edges[i]);
-            ++pivotIndex;
-        }
-    }
-    --pivotIndex;
-    std::swap(edges[pivotIndex], edges[startingIndex]);
-    return pivotIndex;
-}
-
-void quickSort(Edge** &edges, int startingIndex, int lastIndex, int &count){
-    if (startingIndex < lastIndex){
-
-        int centerElement = (startingIndex + lastIndex)/2;
-        int medianElement = returnMedian(edges, startingIndex, centerElement, lastIndex-1);
-        std::swap(edges[startingIndex], edges[medianElement]);
-
-        int pivotIndex = partition(edges, startingIndex, lastIndex, count);
-        quickSort(edges, startingIndex, pivotIndex, count);
-        quickSort(edges, pivotIndex+1, lastIndex, count);
-    }
+bool compareEdges(Edge* e1, Edge* e2){
+    return e1->weight < e2->weight;
 }
 
 int getRandomNumber(int min, int max)
@@ -134,9 +125,6 @@ cv::Mat addColorToSegmentation(ComponentStruct* componentStruct, int rows, int c
         }
         componentStruct = componentStruct->nextComponentStruct;
     }while(componentStruct);
+    
     return segmentedImage;
-}
-
-bool compareEdges(Edge* e1, Edge* e2){
-    return e1->weight < e2->weight;
 }

@@ -23,37 +23,12 @@ int main() {
 
     std::cout << "After Resize: " << img.size() << '\n';
 
-    std::vector<Pixel *> pixels(img.rows*img.cols);
     int rows = img.rows;
     int columns = img.cols;
     int edgeArraySize = getEdgeArraySize(rows, columns);
     std::vector<Edge *> edges(edgeArraySize);
-    int index;
 
-    Component* firstComponent = makeComponent(0, 0, static_cast<int>(img.at<uchar>(0, 0)));
-    auto* firstComponentStruct = new ComponentStruct;
-    firstComponentStruct->component = firstComponent;
-    auto previousComponentStruct = firstComponentStruct;
-
-    for(int row=0; row < rows; row++)
-    {
-        for(int column=0; column < columns; column++)
-        {
-            int pixelValue = static_cast<int>(img.at<uchar>(row, column));
-            Component* component=makeComponent(row, column, pixelValue);
-            auto* newComponentStruct = new ComponentStruct;// = new ComponentStruct;
-            newComponentStruct->component = component;
-            newComponentStruct->previousComponentStruct = previousComponentStruct;
-            previousComponentStruct->nextComponentStruct = newComponentStruct;
-            component->parentComponentStruct = newComponentStruct;
-            previousComponentStruct = newComponentStruct;
-            index = getSingleIndex(row, column, columns);
-            pixels[index] = component->pixels.at(0);
-        }
-    }
-    firstComponentStruct = firstComponentStruct->nextComponentStruct;
-    delete firstComponentStruct->previousComponentStruct;
-    firstComponentStruct->previousComponentStruct = nullptr;
+    auto [firstComponentStruct, pixels] = constructImageGraph(img, rows, columns);
 
     int totalComponents = img.rows*img.cols;
     std::cout << "Before Segmentation total pixels: " << pixels.size() << '\n';
