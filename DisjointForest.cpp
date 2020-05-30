@@ -3,11 +3,27 @@
 //
 #include "DisjointForest.h"
 #include <iostream>
+#include <cmath>
 
 Component* makeComponent(const int row, const int column, const int intensity){
     auto* component = new Component;
     auto* pixel = new Pixel;
     pixel->intensity = intensity;
+    pixel->row = row;
+    pixel->column = column;
+    pixel->parent = pixel;
+    pixel->parentTree = component;
+    component->representative = pixel;
+    component->pixels.push_back(pixel);
+    return component;
+}
+
+Component* makeComponent(const int row, const int column, int b, int g, int r){
+    auto* component = new Component;
+    auto* pixel = new Pixel;
+    pixel->bValue = b;
+    pixel->gValue = g;
+    pixel->rValue = r;
     pixel->row = row;
     pixel->column = column;
     pixel->parent = pixel;
@@ -28,6 +44,12 @@ void setParentTree(Component* childTreePointer, Component* parentTreePointer){
     }
 }
 
+double rgbPixelDifference( int b1, int g1, int r1, int b2, int g2, int r2){
+    return sqrt(pow(r1- r2, 2 ) +
+                pow(b1-b2, 2) +
+                pow(g1-g2, 2));
+}
+
 Edge* createEdge(Pixel* pixel1, Pixel* pixel2){
     Edge* edge = new Edge;
     edge->weight = abs(pixel1->intensity - pixel2 ->intensity);
@@ -36,7 +58,17 @@ Edge* createEdge(Pixel* pixel1, Pixel* pixel2){
     return edge;
 }
 
-void mergeComponents(Component* x, Component* y, int MSTMaxEdgeValue){
+
+Edge* createRGBEdge(Pixel* pixel1, Pixel* pixel2){
+    Edge* edge = new Edge;
+    edge->weight = rgbPixelDifference(pixel1->bValue, pixel1->gValue, pixel1->rValue, pixel2->bValue,
+                                      pixel2->gValue, pixel2->rValue);
+    edge->n1 = pixel1;
+    edge->n2 = pixel2;
+    return edge;
+}
+
+void mergeComponents(Component* x, Component* y, double MSTMaxEdgeValue){
     if (x != y) {
         ComponentStruct* componentStruct;
         if (x->rank < y->rank) {

@@ -4,6 +4,7 @@
 #ifndef STD_VECTOR
 #define STD_VECTOR
 #include <vector>
+
 #endif
 
 struct Component;
@@ -13,6 +14,9 @@ struct Pixel{
     Component* parentTree;
     Pixel* parent;
     int intensity;
+    int bValue;
+    int gValue;
+    int rValue;
     int row;
     int column;
 };
@@ -22,11 +26,11 @@ struct Component{
     std::vector<Pixel *> pixels;
     int rank = 0;
     Pixel* representative;
-    int MSTMaxEdge = 0;
+    double MSTMaxEdge = 0;
 };
 
 struct Edge{
-    int weight;
+    double weight;
     Pixel* n1;
     Pixel* n2;
 };
@@ -39,5 +43,7 @@ struct ComponentStruct{
 };
 
 Component* makeComponent(int row, int col, int intensity);
+Component* makeComponent(int row, int col, int b, int g, int r);
 Edge* createEdge(Pixel* pixel1, Pixel* pixel2);
-void mergeComponents(Component* x, Component* y, int MSTMaxEdgeValue);
+Edge* createRGBEdge(Pixel* pixel1, Pixel* pixel2);
+void mergeComponents(Component* x, Component* y, double MSTMaxEdgeValue);

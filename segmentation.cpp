@@ -12,6 +12,7 @@ void segmentImage(std::vector<Edge *> &edges, int &totalComponents, int minimumC
     Pixel* pixel2;
     Component* component1;
     Component* component2;
+    double minimumInternalDifference;
     for(Edge* edge: edges){
         pixel1 = edge->n1;
         pixel2 = edge->n2;
@@ -19,7 +20,7 @@ void segmentImage(std::vector<Edge *> &edges, int &totalComponents, int minimumC
         component1 = pixel1->parentTree;
         component2 = pixel2->parentTree;
         if(component1!=component2){
-            float minimumInternalDifference = std::min(component1->MSTMaxEdge +
+            minimumInternalDifference = std::min(component1->MSTMaxEdge +
                                                                thresholdFunction(component1->pixels.size(), kValue),
                                                        component2->MSTMaxEdge +
                                                                thresholdFunction(component2->pixels.size(), kValue));
@@ -40,10 +41,11 @@ void segmentImage(std::vector<Edge *> &edges, int &totalComponents, int minimumC
 
         component1 = pixel1->parentTree;
         component2 = pixel2->parentTree;
-        if((component1!=component2)&&(component1->pixels.size()<minimumComponentSize) ||
-                                        component2->pixels.size()<minimumComponentSize){
-            mergeComponents(component1, component2, edge->weight);
-            --totalComponents;
+        if(component1->representative!=component2->representative){
+            if ((component1->pixels.size()<minimumComponentSize) || (component2->pixels.size()<minimumComponentSize)){
+                mergeComponents(component1, component2, edge->weight);
+                --totalComponents;
+            }
         }
     }
 
