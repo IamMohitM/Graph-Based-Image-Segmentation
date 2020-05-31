@@ -21,11 +21,14 @@ Entire bottom-up implementation done by the author (post-processing and rgb-colo
 |![Image Versailles Gardens](images/versailles-gardens.jpg)|sigma = 1.0 k = 750 min = 100 Grayscale![Results Versailles Gardens](Results/versailles-gardens-gray-k1000-1.500000-min100.jpg)              |
 
 
-### TODO:
+### TODO
 - [ ] Fix Relative Paths<br>
 - [ ] Add makefile installation
 
-### Note:
+### License
+[GNU-GPL](https://choosealicense.com/licenses/gpl-3.0/)
+
+### Note
 The files in Results folder are names in format : *filename-[gray|rgb]-k{value}-{sigmaValue}-min{minimumComponents}.jpg*
 
 
