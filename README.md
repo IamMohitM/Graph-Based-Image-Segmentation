@@ -24,6 +24,8 @@ Entire bottom-up implementation done by the author (post-processing and rgb-colo
 ### TODO
 - [ ] Fix Relative Paths<br>
 - [ ] Add makefile installation
+- [ ] Remove raw pointers and use unique_ptr instead
+- [ ] Validate pointer parameters to functions (prefer passing by reference instead) 
 
 ### License
 [GNU-GPL](https://choosealicense.com/licenses/gpl-3.0/)
