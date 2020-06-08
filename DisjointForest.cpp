@@ -18,7 +18,7 @@ Component* makeComponent(const int row, const int column, const int intensity){
     return component;
 }
 
-Component* makeComponent(const int row, const int column, int b, int g, int r){
+Component* makeComponent(const int row, const int column, const int b,const int g,const int r){
     auto* component = new Component;
     auto* pixel = new Pixel;
     pixel->bValue = b;
@@ -44,7 +44,7 @@ void setParentTree(Component* childTreePointer, Component* parentTreePointer){
     }
 }
 
-double rgbPixelDifference( int b1, int g1, int r1, int b2, int g2, int r2){
+double rgbPixelDifference(const int b1,const int g1,const int r1,const int b2,const int g2,const int r2){
     return sqrt(pow(r1- r2, 2 ) +
                 pow(b1-b2, 2) +
                 pow(g1-g2, 2));
@@ -68,7 +68,7 @@ Edge* createRGBEdge(Pixel* pixel1, Pixel* pixel2){
     return edge;
 }
 
-void mergeComponents(Component* x, Component* y, double MSTMaxEdgeValue){
+void mergeComponents(Component* x, Component* y,const double MSTMaxEdgeValue){
     if (x != y) {
         ComponentStruct* componentStruct;
         if (x->rank < y->rank) {

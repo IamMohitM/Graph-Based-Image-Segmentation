@@ -1,11 +1,7 @@
 //
 // Created by mo on 21/05/20.
 //
-#ifndef STD_VECTOR
-#define STD_VECTOR
 #include <vector>
-
-#endif
 
 struct Component;
 struct ComponentStruct;

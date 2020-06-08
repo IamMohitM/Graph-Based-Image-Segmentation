@@ -8,7 +8,7 @@ int getSingleIndex(const int row,const int col,const int totalColumns){
     return (row*totalColumns) + col;
 }
 
-std::vector<std::string> split(const std::string& s, char seperator)
+std::vector<std::string> split(const std::string& s,const char seperator)
 {
     std::vector<std::string> output;
     std::string::size_type prev_pos = 0, pos = 0;
@@ -22,7 +22,7 @@ std::vector<std::string> split(const std::string& s, char seperator)
     return output;
 }
 
-std::string getFileNameFromPath(std::string &path){
+std::string getFileNameFromPath(const std::string &path){
     std::vector<std::string> pathSplit = split(path, '/');
     std::string fileName = pathSplit[pathSplit.size()-1];
     std::vector<std::string> fileNameSplit = split(fileName, '.');
@@ -30,7 +30,7 @@ std::string getFileNameFromPath(std::string &path){
     return baseFileName;
 }
 
-int getEdgeArraySize(int rows, int columns){
+int getEdgeArraySize(const int rows,const int columns){
     int firstColumn = 3 * (rows-1);
     int lastColumn = 2 * (rows - 1);
     int middleValues = 4 * (rows - 1 ) * (columns - 2);
@@ -38,7 +38,7 @@ int getEdgeArraySize(int rows, int columns){
     return firstColumn + lastColumn + middleValues + lastRow;
 }
 
-std::vector<Pixel *>& constructImageGraph(cv::Mat& img, std::vector<Pixel *> &pixels, int rows, int columns){
+std::vector<Pixel *>& constructImageGraph(const cv::Mat& img, std::vector<Pixel *> &pixels, int rows, int columns){
     Component* firstComponent = makeComponent(0, 0, static_cast<int>(img.at<uchar>(0, 0)));
     auto* firstComponentStruct = new ComponentStruct;
     firstComponentStruct->component = firstComponent;
@@ -67,7 +67,7 @@ std::vector<Pixel *>& constructImageGraph(cv::Mat& img, std::vector<Pixel *> &pi
     return pixels;
 }
 
-std::vector<Pixel *>& constructRGBImageGraph(cv::Mat& img, std::vector<Pixel *> &pixels, int rows, int columns){
+std::vector<Pixel *>& constructRGBImageGraph(const cv::Mat& img, std::vector<Pixel *> &pixels, int rows, int columns){
     cv::Vec3b pixelValues = img.at<cv::Vec3b>(0, 0);
     Component* firstComponent = makeComponent(0, 0, pixelValues.val[0],
                                             pixelValues.val[1], pixelValues.val[2]);
@@ -99,7 +99,7 @@ std::vector<Pixel *>& constructRGBImageGraph(cv::Mat& img, std::vector<Pixel *> 
     return pixels;
 }
 
-std::vector<Edge *>& setEdges(const cv::Mat &img, std::vector<Pixel *> &pixels, std::vector<Edge*> &edges){
+std::vector<Edge *>& setEdges(const cv::Mat &img, const std::vector<Pixel *> &pixels, std::vector<Edge*> &edges){
     int rows = img.rows;
     int columns = img.cols;
     int edgeCount = 0;
@@ -133,7 +133,7 @@ std::vector<Edge *>& setEdges(const cv::Mat &img, std::vector<Pixel *> &pixels, 
     return edges;
 }
 
-std::vector<Edge *>& setRGBEdges(const cv::Mat &img, std::vector<Pixel *> &pixels, std::vector<Edge*> &edges){
+std::vector<Edge *>& setRGBEdges(const cv::Mat &img, const std::vector<Pixel *> &pixels, std::vector<Edge*> &edges){
     int rows = img.rows;
     int columns = img.cols;
     int edgeCount = 0;
@@ -167,11 +167,11 @@ std::vector<Edge *>& setRGBEdges(const cv::Mat &img, std::vector<Pixel *> &pixel
     return edges;
 }
 
-bool compareEdges(Edge* e1, Edge* e2){
+bool compareEdges(const Edge* e1, const Edge* e2){
     return e1->weight < e2->weight;
 }
 
-int getRandomNumber(int min, int max)
+int getRandomNumber(const int min,const int max)
 {
     //from learncpp.com
     static constexpr double fraction { 1.0 / (RAND_MAX + 1.0) };
@@ -179,7 +179,7 @@ int getRandomNumber(int min, int max)
 }
 
 
-cv::Mat addColorToSegmentation(ComponentStruct* componentStruct, int rows, int columns){
+cv::Mat addColorToSegmentation(const ComponentStruct* componentStruct, int rows, int columns){
     cv::Mat segmentedImage(rows, columns, CV_8UC3);
     do{
         uchar r=getRandomNumber(0, 255);
