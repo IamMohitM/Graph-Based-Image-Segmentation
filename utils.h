@@ -1,7 +1,5 @@
-int getSingleIndex( int row,int col,int totalColumns);
-void quickSort(Edge** &edges, int startingIndex, int lastIndex, int &count);
-int getRandomNumber(int min, int max);
-int getEdgeArraySize(int rows, int columns);
+int getSingleIndex(const int row, const int col, const int totalColumns);
+int getEdgeArraySize(const int rows,const int columns);
 std::vector<Edge*>& setEdges(const cv::Mat &img, const std::vector<Pixel *> &pixels, std::vector<Edge*> &edges);
 std::vector<Edge*>& setRGBEdges(const cv::Mat &img, const std::vector<Pixel *> &pixels, std::vector<Edge*> &edges);
 bool compareEdges(const Edge* e1,const Edge* e2);

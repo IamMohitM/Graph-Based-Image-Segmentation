@@ -2,7 +2,7 @@
 #include <vector>
 #include "DisjointForest.h"
 
-inline float thresholdFunction(float componentSize, float k){
+inline float thresholdFunction(const float componentSize,const float k){
     return k/componentSize;
 }
 
