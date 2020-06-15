@@ -9,7 +9,7 @@
 
 int main(int argc, char* argv[]) {
     if (argc != 7){
-        std::cout << "Execute: .\\GraphSegment inputImage outputDir colorSpace k(float) sigma(float) minSize(int)\n";
+        std::cout << "Execute: .\\ImageSegment inputImage outputDir colorSpace k(float) sigma(float) minSize(int)\n";
         std::cout << "Exiting program\n";
         std::exit(1);
     }
@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
 
     convert << argv[4] << " " << argv[5] << " " << argv[6];
     if (!(convert >> kValue) || !(convert >> gaussianBlur) || !(convert >> minimumComponentSize)){
-        std::cout << "Execute: .\\GraphSegment inputImage outputDir colorSpace k(float) sigma(float) minSize(int)\n";
+        std::cout << "Execute: .\\ImageSegment inputImage outputDir colorSpace k(float) sigma(float) minSize(int)\n";
         std::cout << "Something wrong with value k, sigma or minSize, (arguments - 5, 6, 7) \n";
         std::cout << "Exiting program\n";
         std::exit(1);
