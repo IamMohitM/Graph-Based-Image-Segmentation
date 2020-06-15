@@ -5,25 +5,14 @@
 #include <iostream>
 #include <cmath>
 
-Component* makeComponent(const int row, const int column, const int intensity){
-    auto* component = new Component;
-    auto* pixel = new Pixel;
-    pixel->intensity = intensity;
-    pixel->row = row;
-    pixel->column = column;
-    pixel->parent = pixel;
-    pixel->parentTree = component;
-    component->representative = pixel;
-    component->pixels.push_back(pixel);
-    return component;
-}
 
-Component* makeComponent(const int row, const int column, const int b,const int g,const int r){
+Component* makeComponent(const int row, const int column, cv::Vec3b pixelValues){
     auto* component = new Component;
     auto* pixel = new Pixel;
-    pixel->bValue = b;
-    pixel->gValue = g;
-    pixel->rValue = r;
+    pixel->bValue = pixelValues.val[0];
+    pixel->gValue = pixelValues.val[1];
+    pixel->rValue = pixelValues.val[2];
+    pixel->intensity = (pixelValues.val[0] + pixelValues.val[1] + pixelValues.val[2])/3;
     pixel->row = row;
     pixel->column = column;
     pixel->parent = pixel;
@@ -50,19 +39,19 @@ double rgbPixelDifference(const int b1,const int g1,const int r1,const int b2,co
                 pow(g1-g2, 2));
 }
 
-Edge* createEdge(Pixel* pixel1, Pixel* pixel2){
-    Edge* edge = new Edge;
-    edge->weight = abs(pixel1->intensity - pixel2 ->intensity);
-    edge->n1 = pixel1;
-    edge->n2 = pixel2;
-    return edge;
+double grayPixelDifference(Pixel* pixel1, Pixel* pixel2){
+    return abs(pixel1->intensity - pixel2->intensity);
 }
 
+double rgbPixelDifference(Pixel* pixel1, Pixel* pixel2){
+    return sqrt(pow(pixel1->rValue- pixel2->rValue, 2 ) +
+                pow(pixel1->bValue- pixel2->bValue, 2) +
+                pow(pixel1->gValue- pixel2->gValue, 2));
+}
 
-Edge* createRGBEdge(Pixel* pixel1, Pixel* pixel2){
+Edge* createEdge(Pixel* pixel1, Pixel* pixel2,  std::function<double(Pixel*, Pixel*)> edgeDifferenceFunction){
     Edge* edge = new Edge;
-    edge->weight = rgbPixelDifference(pixel1->bValue, pixel1->gValue, pixel1->rValue, pixel2->bValue,
-                                      pixel2->gValue, pixel2->rValue);
+    edge->weight = edgeDifferenceFunction(pixel1, pixel2);
     edge->n1 = pixel1;
     edge->n2 = pixel2;
     return edge;

@@ -1,7 +1,10 @@
 //
 // Created by mo on 21/05/20.
 //
+#pragma once
 #include <vector>
+#include <functional>
+#include <opencv2/opencv.hpp>
 
 struct Component;
 struct ComponentStruct;
@@ -31,15 +34,16 @@ struct Edge{
     Pixel* n2;
 };
 
-
 struct ComponentStruct{
     ComponentStruct* previousComponentStruct=nullptr;
     Component* component{};
     ComponentStruct* nextComponentStruct= nullptr;
 };
 
-Component* makeComponent(int row, int col, int intensity);
-Component* makeComponent(int row, int col, int b, int g, int r);
 Edge* createEdge(Pixel* pixel1, Pixel* pixel2);
+Edge* createEdge(Pixel* pixel1, Pixel* pixel2,  std::function<double(Pixel*, Pixel*)> edgeDifferenceFunction);
 Edge* createRGBEdge(Pixel* pixel1, Pixel* pixel2);
+double rgbPixelDifference(Pixel* pixel1, Pixel* pixel2);
+double grayPixelDifference(Pixel* pixel1, Pixel* pixel2);
 void mergeComponents(Component* x, Component* y, double MSTMaxEdgeValue);
+Component* makeComponent(const int row, const int column, cv::Vec3b pixelValues);

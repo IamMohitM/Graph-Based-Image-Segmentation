@@ -1,28 +1,31 @@
-#include <opencv2/opencv.hpp>
-#include <vector>
-#include <cstdlib>
-#include "DisjointForest.h"
 #include <string>
 #include <iostream>
+#include <functional>
+#include <vector>
+#include <cstdlib>
+#include <opencv2/opencv.hpp>
+#include "DisjointForest.h"
 
-int getSingleIndex(const int row,const int col,const int totalColumns){
+
+int getSingleIndex(const int row, const int col, const int totalColumns){
     return (row*totalColumns) + col;
 }
 
 void printParameters(const std::string &inputPath, const std::string &outputDir, const std::string &color,
-        const float sigma, const float k, const int minimumComponenetSize){
+        const float sigma, const float k, const int minimumComponentSize){
     std::cout << "Input Path: " << inputPath << '\n';
     std::cout << "Output Directory: " << outputDir << '\n';
     std::cout << "Color Space: " << color << '\n';
     std::cout << "Sigma: " << sigma << '\n';
     std::cout << "k: " << k << '\n';
-    std::cout << "Minimum Component Size: " << minimumComponenetSize << '\n';
+    std::cout << "Minimum Component Size: " << minimumComponentSize << '\n';
 }
-std::vector<std::string> split(const std::string& s,const char seperator)
+
+std::vector<std::string> split(const std::string& s, const char separator)
 {
     std::vector<std::string> output;
     std::string::size_type prev_pos = 0, pos = 0;
-    while((pos = s.find(seperator, pos)) != std::string::npos)
+    while((pos = s.find(separator, pos)) != std::string::npos)
     {
         std::string substring( s.substr(prev_pos, pos-prev_pos) );
         output.push_back(substring);
@@ -48,8 +51,10 @@ int getEdgeArraySize(const int rows,const int columns){
     return firstColumn + lastColumn + middleValues + lastRow;
 }
 
-std::vector<Pixel *>& constructImageGraph(const cv::Mat& img, std::vector<Pixel *> &pixels, int rows, int columns){
-    Component* firstComponent = makeComponent(0, 0, static_cast<int>(img.at<uchar>(0, 0)));
+std::vector<Pixel *> constructImagePixels(const cv::Mat &img, int rows, int columns){
+    std::vector<Pixel *> pixels(rows*columns);
+
+    Component* firstComponent = makeComponent(0, 0, img.at<cv::Vec3b>(0, 0));
     auto* firstComponentStruct = new ComponentStruct;
     firstComponentStruct->component = firstComponent;
     auto previousComponentStruct = firstComponentStruct;
@@ -59,8 +64,7 @@ std::vector<Pixel *>& constructImageGraph(const cv::Mat& img, std::vector<Pixel 
     {
         for(int column=0; column < columns; column++)
         {
-            int pixelValue = static_cast<int>(img.at<uchar>(row, column));
-            Component* component=makeComponent(row, column, pixelValue);
+            Component* component=makeComponent(row, column, img.at<cv::Vec3b>(row, column));
             auto* newComponentStruct = new ComponentStruct;
             newComponentStruct->component = component;
             newComponentStruct->previousComponentStruct = previousComponentStruct;
@@ -77,98 +81,38 @@ std::vector<Pixel *>& constructImageGraph(const cv::Mat& img, std::vector<Pixel 
     return pixels;
 }
 
-std::vector<Pixel *>& constructRGBImageGraph(const cv::Mat& img, std::vector<Pixel *> &pixels, int rows, int columns){
-    cv::Vec3b pixelValues = img.at<cv::Vec3b>(0, 0);
-    Component* firstComponent = makeComponent(0, 0, pixelValues.val[0],
-                                            pixelValues.val[1], pixelValues.val[2]);
-    auto* firstComponentStruct = new ComponentStruct;
-    firstComponentStruct->component = firstComponent;
-    auto previousComponentStruct = firstComponentStruct;
-    int index;
-
-    for(int row=0; row < rows; row++)
-    {
-        for(int column=0; column < columns; column++)
-        {
-            pixelValues = img.at<cv::Vec3b>(row, column);
-            Component* component=makeComponent(row, column, pixelValues.val[0],
-                                            pixelValues.val[1], pixelValues.val[2]);
-            auto* newComponentStruct = new ComponentStruct;
-            newComponentStruct->component = component;
-            newComponentStruct->previousComponentStruct = previousComponentStruct;
-            previousComponentStruct->nextComponentStruct = newComponentStruct;
-            component->parentComponentStruct = newComponentStruct;
-            previousComponentStruct = newComponentStruct;
-            index = getSingleIndex(row, column, columns);
-            pixels[index] = component->pixels.at(0);
-        }
+std::vector<Edge *> setEdges(const std::vector<Pixel *> &pixels, const std::string colorSpace, const int rows, const int columns){
+    int edgeArraySize = getEdgeArraySize(rows, columns);
+    std::vector<Edge *> edges(edgeArraySize);
+    std::function<double(Pixel*, Pixel*)> edgeDifferenceFunction;
+    if (colorSpace == "rgb"){
+        edgeDifferenceFunction = rgbPixelDifference;
+    }else{
+        edgeDifferenceFunction = grayPixelDifference;
     }
-    firstComponentStruct = firstComponentStruct->nextComponentStruct;
-    delete firstComponentStruct->previousComponentStruct;
-    firstComponentStruct->previousComponentStruct = nullptr;
-    return pixels;
-}
-
-std::vector<Edge *>& setEdges(const cv::Mat &img, const std::vector<Pixel *> &pixels, std::vector<Edge*> &edges){
-    int rows = img.rows;
-    int columns = img.cols;
     int edgeCount = 0;
-    for(int row=0; row < img.rows; ++row){
-        for(int column=0; column < img.cols; ++column) {
+    for(int row=0; row < rows; ++row){
+        for(int column=0; column < columns; ++column) {
             Pixel* presentPixel = pixels[getSingleIndex(row, column, columns)];
             if(row < rows - 1){
                 if(column == 0){
-                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row, column+1, columns)]);
-                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column+1, columns)]);
-                    edges[edgeCount++] = createEdge(presentPixel , pixels[getSingleIndex(row+1, column, columns)]);
+                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row, column+1, columns)], edgeDifferenceFunction);
+                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column+1, columns)], edgeDifferenceFunction);
+                    edges[edgeCount++] = createEdge(presentPixel , pixels[getSingleIndex(row+1, column, columns)], edgeDifferenceFunction);
                 }
                 else if(column==columns-1){
-                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column, columns)]);
-                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column-1, columns)]);
+                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column, columns)], edgeDifferenceFunction);
+                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column-1, columns)], edgeDifferenceFunction);
                 }else{
-                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row, column+1, columns)]);
-                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column+1, columns)]);
-                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column, columns)]);
-                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column-1, columns)]);
+                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row, column+1, columns)], edgeDifferenceFunction);
+                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column+1, columns)], edgeDifferenceFunction);
+                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column, columns)], edgeDifferenceFunction);
+                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row+1, column-1, columns)], edgeDifferenceFunction);
                 }
             }
             else if(row == rows - 1){
                 if(column != columns - 1) {
-                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row,column+1, columns)]);
-                }
-            }
-        }
-    }
-    std::cout << "Total Edges: "<< edgeCount << '\n';
-    return edges;
-}
-
-std::vector<Edge *>& setRGBEdges(const cv::Mat &img, const std::vector<Pixel *> &pixels, std::vector<Edge*> &edges){
-    int rows = img.rows;
-    int columns = img.cols;
-    int edgeCount = 0;
-    for(int row=0; row < img.rows; ++row){
-        for(int column=0; column < img.cols; ++column) {
-            Pixel* presentPixel = pixels[getSingleIndex(row, column, columns)];
-            if(row < rows - 1){
-                if(column == 0){
-                    edges[edgeCount++] = createRGBEdge(presentPixel, pixels[getSingleIndex(row, column+1, columns)]);
-                    edges[edgeCount++] = createRGBEdge(presentPixel, pixels[getSingleIndex(row+1, column+1, columns)]);
-                    edges[edgeCount++] = createRGBEdge(presentPixel , pixels[getSingleIndex(row+1, column, columns)]);
-                }
-                else if(column==columns-1){
-                    edges[edgeCount++] = createRGBEdge(presentPixel, pixels[getSingleIndex(row+1, column, columns)]);
-                    edges[edgeCount++] = createRGBEdge(presentPixel, pixels[getSingleIndex(row+1, column-1, columns)]);
-                }else{
-                    edges[edgeCount++] = createRGBEdge(presentPixel, pixels[getSingleIndex(row, column+1, columns)]);
-                    edges[edgeCount++] = createRGBEdge(presentPixel, pixels[getSingleIndex(row+1, column+1, columns)]);
-                    edges[edgeCount++] = createRGBEdge(presentPixel, pixels[getSingleIndex(row+1, column, columns)]);
-                    edges[edgeCount++] = createRGBEdge(presentPixel, pixels[getSingleIndex(row+1, column-1, columns)]);
-                }
-            }
-            else if(row == rows - 1){
-                if(column != columns - 1) {
-                    edges[edgeCount++] = createRGBEdge(presentPixel, pixels[getSingleIndex(row,column+1, columns)]);
+                    edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row,column+1, columns)], edgeDifferenceFunction);
                 }
             }
         }
