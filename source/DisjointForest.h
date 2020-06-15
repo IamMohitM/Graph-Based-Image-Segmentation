@@ -40,9 +40,7 @@ struct ComponentStruct{
     ComponentStruct* nextComponentStruct= nullptr;
 };
 
-Edge* createEdge(Pixel* pixel1, Pixel* pixel2);
 Edge* createEdge(Pixel* pixel1, Pixel* pixel2,  std::function<double(Pixel*, Pixel*)> edgeDifferenceFunction);
-Edge* createRGBEdge(Pixel* pixel1, Pixel* pixel2);
 double rgbPixelDifference(Pixel* pixel1, Pixel* pixel2);
 double grayPixelDifference(Pixel* pixel1, Pixel* pixel2);
 void mergeComponents(Component* x, Component* y, double MSTMaxEdgeValue);

@@ -22,21 +22,11 @@ Component* makeComponent(const int row, const int column, cv::Vec3b pixelValues)
     return component;
 }
 
-inline Component* findSet(Pixel* node){
-    return node->parentTree;
-}
-
 void setParentTree(Component* childTreePointer, Component* parentTreePointer){
     for(Pixel* nodePointer: childTreePointer->pixels){
         parentTreePointer->pixels.push_back(nodePointer);
         nodePointer->parentTree = parentTreePointer;
     }
-}
-
-double rgbPixelDifference(const int b1,const int g1,const int r1,const int b2,const int g2,const int r2){
-    return sqrt(pow(r1- r2, 2 ) +
-                pow(b1-b2, 2) +
-                pow(g1-g2, 2));
 }
 
 double grayPixelDifference(Pixel* pixel1, Pixel* pixel2){

@@ -1,4 +1,3 @@
-
 int getSingleIndex(const int row, const int col, const int totalColumns);
 int getEdgeArraySize(const int rows,const int columns);
 std::vector<Edge *> setEdges(const std::vector<Pixel *> &pixels, std::string colorSpace, int rows, int columns);
