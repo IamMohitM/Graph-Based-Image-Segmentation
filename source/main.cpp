@@ -7,23 +7,39 @@
 #include "utils.h"
 #include "segmentation.h"
 
-int main() {
-    std::string color = "rgb";
-    float gaussianBlur = 2.5;
-    int minimumComponentSize = 100;
-    float kValue = 900;
+int main(int argc, char* argv[]) {
+    if (argc != 7){
+        std::cout << "Execute: .\\GraphSegment inputImage outputDir color k(float) sigma(float) minSize(int)\n";
+        std::cout << "Exiting program\n";
+        std::exit(1);
+    }
+    const std::string inputPath =  argv[1];
+    const std::string outputFolder = argv[2];
+    const std::string color = argv[3];
+
+    float gaussianBlur, kValue;
+    int minimumComponentSize;
+    std::stringstream convert;
+
+    convert << argv[4] << " " << argv[5] << " " << argv[6];
+    if (!(convert >> kValue) || !(convert >> gaussianBlur) || !(convert >> minimumComponentSize)){
+        std::cout << "Execute: .\\GraphSegment inputImage outputDir color k(float) sigma(float) minSize(int)\n";
+        std::cout << "Something wrong with value k, sigma or minSize, (arguments - 5, 6, 7) \n";
+        std::cout << "Exiting program\n";
+        std::exit(1);
+    }
+    printParameters(inputPath, outputFolder, color, gaussianBlur, kValue, minimumComponentSize);
+
+    const std::filesystem::path path = std::filesystem::u8path(inputPath);
+    const std::string baseFileName = getFileNameFromPath(inputPath);
+    std::cout << "Filename: " << baseFileName << '\n';
+
     int flag;
     if (color=="rgb"){
         flag = cv::IMREAD_COLOR;
     } else{
         flag = cv::IMREAD_GRAYSCALE;
     }
-
-    std::string inputPath =  "/home/mo/CLionProjects/GraphBasedImageSegmentation/images/baseball.png";
-    std::filesystem::path path = std::filesystem::u8path(inputPath);
-    std::string outputFolder = "/home/mo/CLionProjects/GraphBasedImageSegmentation/Results/";
-    std::string baseFileName = getFileNameFromPath(inputPath);
-    std::cout << "Filename: " << baseFileName << '\n';
 
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 

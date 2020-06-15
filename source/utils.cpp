@@ -3,11 +3,21 @@
 #include <cstdlib>
 #include "DisjointForest.h"
 #include <string>
+#include <iostream>
 
 int getSingleIndex(const int row,const int col,const int totalColumns){
     return (row*totalColumns) + col;
 }
 
+void printParameters(const std::string &inputPath, const std::string &outputDir, const std::string &color,
+        const float sigma, const float k, const int minimumComponenetSize){
+    std::cout << "Input Path: " << inputPath << '\n';
+    std::cout << "Output Directory: " << outputDir << '\n';
+    std::cout << "Color Space: " << color << '\n';
+    std::cout << "Sigma: " << sigma << '\n';
+    std::cout << "k: " << k << '\n';
+    std::cout << "Minimum Component Size: " << minimumComponenetSize << '\n';
+}
 std::vector<std::string> split(const std::string& s,const char seperator)
 {
     std::vector<std::string> output;
