@@ -6,7 +6,7 @@
 #include <cmath>
 
 
-Component* makeComponent(const int row, const int column, cv::Vec3b pixelValues){
+Component* makeComponent(const int row, const int column, const cv::Vec3b& pixelValues){
     auto* component = new Component;
     auto* pixel = new Pixel;
     pixel->bValue = pixelValues.val[0];
@@ -39,7 +39,7 @@ double rgbPixelDifference(Pixel* pixel1, Pixel* pixel2){
                 pow(pixel1->gValue- pixel2->gValue, 2));
 }
 
-Edge* createEdge(Pixel* pixel1, Pixel* pixel2,  std::function<double(Pixel*, Pixel*)> edgeDifferenceFunction){
+Edge* createEdge(Pixel* pixel1, Pixel* pixel2, const std::function<double(Pixel*, Pixel*)> &edgeDifferenceFunction){
     Edge* edge = new Edge;
     edge->weight = edgeDifferenceFunction(pixel1, pixel2);
     edge->n1 = pixel1;

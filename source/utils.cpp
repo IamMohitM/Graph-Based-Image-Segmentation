@@ -121,10 +121,6 @@ std::vector<Edge *> setEdges(const std::vector<Pixel *> &pixels, const std::stri
     return edges;
 }
 
-bool compareEdges(const Edge* e1, const Edge* e2){
-    return e1->weight < e2->weight;
-}
-
 int getRandomNumber(const int min,const int max)
 {
     //from learncpp.com
@@ -132,8 +128,7 @@ int getRandomNumber(const int min,const int max)
     return min + static_cast<int>((max - min + 1) * (std::rand() * fraction));
 }
 
-
-cv::Mat addColorToSegmentation(const ComponentStruct* componentStruct, int rows, int columns){
+cv::Mat addColorToSegmentation(const ComponentStruct* componentStruct, const int rows, const int columns){
     cv::Mat segmentedImage(rows, columns, CV_8UC3);
     do{
         uchar r=getRandomNumber(0, 255);
