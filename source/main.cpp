@@ -38,17 +38,18 @@ int main(int argc, char* argv[]) {
 
     cv::Mat img = cv::imread(path, cv::IMREAD_COLOR);
     cv::GaussianBlur(img, img, cv::Size(3,3), gaussianBlur);
-    int rows = img.rows;
-    int columns = img.cols;
+    const int rows = img.rows;
+    const int columns = img.cols;
     std::cout << "Rows: " << rows << '\n';
     std::cout << "Columns: " << columns << '\n';
-
 
     std::vector<Pixel *> pixels = constructImagePixels(img, rows, columns);
     std::vector<Edge *> edges = setEdges(pixels, colorSpace, rows, columns);
 
     std::cout << "Sorting\n";
-    std::sort(edges.begin(), edges.end(), compareEdges);
+    std::sort(edges.begin(), edges.end(), [] (const Edge* e1, const Edge* e2){
+                                                        return e1->weight < e2->weight;
+                                                        });
 
     int totalComponents = rows * columns;
     segmentImage(edges, totalComponents, minimumComponentSize, kValue);
@@ -63,10 +64,7 @@ int main(int argc, char* argv[]) {
                               "min" + std::to_string(static_cast<int>(minimumComponentSize)) + ".jpg";
 
     std::filesystem::path destinationPath = std::filesystem::u8path(outputPath);
-    cv::Mat segmentedImage = addColorToSegmentation(firstComponentStruct, img.rows, img.cols);
-    std::cout << segmentedImage.size() << '\n';
-    std::cout << segmentedImage.rows << '\n';
-    std::cout << segmentedImage.cols<< '\n';
+    cv::Mat segmentedImage = addColorToSegmentation(firstComponentStruct, rows, columns);
     cv::imshow("Image", segmentedImage);
     cv::imwrite(destinationPath, segmentedImage);
     std::cout << "Image saved as: " << outputPath << '\n';
