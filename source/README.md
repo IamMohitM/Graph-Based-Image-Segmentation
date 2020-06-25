@@ -1,9 +1,9 @@
 # Graph-Based-Image-Segmentation
 This project is an attempt to implement the research paper: [Efficient Graph Based Image Segmentation](http://people.cs.uchicago.edu/~pff/papers/seg-ijcv.pdf).
-Entire bottom-up implementation done by the author (post-processing and rgb-color difference ideas taken from [here](http://cs.brown.edu/people/pfelzens/segment/)).
+Entire bottom-up implementation done by the author (post-processing and rgb-color difference ideas taken from [here](http://cs.brown.edu/people/pfelzens/segment/)). I have also written an [article](https://iammohitm.github.io./Graph-Based-Image-Segmentation/) summarizing and explaining the research paper
  
 ### Requirements
-1. C++ standard 17
+1. C++ standard 17a
 2. OpenCV
 
 ### Building and Execution
@@ -35,7 +35,7 @@ Execute the program while in build directory
 
 ### TODO
 - [ ] Fix Relative Paths<br>
-- [ ] Add makefile installation
+- [x] Add cmake installation
 - [ ] Remove raw pointers and use unique_ptr instead
 - [ ] Validate pointer parameters to functions (prefer passing by reference instead) 
 
@@ -43,6 +43,6 @@ Execute the program while in build directory
 [GNU-GPL](https://choosealicense.com/licenses/gpl-3.0/)
 
 ### Note
-The files in Results folder are names in format : *filename-[gray|rgb]-k{value}-{sigmaValue}-min{minimumComponents}.jpg*
+The files in the Results folder are named in format : *filename-[gray|rgb]-k{value}-{sigmaValue}-min{minimumComponents}.jpg*
 
 
