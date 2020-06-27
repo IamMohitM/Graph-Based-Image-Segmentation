@@ -40,14 +40,11 @@ int main(int argc, char* argv[]) {
     cv::GaussianBlur(img, img, cv::Size(3,3), gaussianBlur);
     const int rows = img.rows;
     const int columns = img.cols;
-    std::cout << "Rows: " << rows << '\n';
-    std::cout << "Columns: " << columns << '\n';
+    std::cout << "Image Size:  " << img.size << '\n';
 
-    std::vector<Pixel *> pixels = constructImagePixels(img, rows, columns);
-    std::vector<Edge *> edges = setEdges(pixels, colorSpace, rows, columns);
-
-    std::cout << "Sorting\n";
-    std::sort(edges.begin(), edges.end(), [] (const Edge* e1, const Edge* e2){
+    std::vector<pixel_pointer> pixels = constructImagePixels(img, rows, columns);
+    std::vector<edge_pointer> edges = setEdges(pixels, colorSpace, rows, columns);
+    std::sort(edges.begin(), edges.end(), [] (const edge_pointer e1, const edge_pointer e2){
                                                         return e1->weight < e2->weight;
                                                         });
 

@@ -51,11 +51,11 @@ int getEdgeArraySize(const int rows,const int columns){
     return firstColumn + lastColumn + middleValues + lastRow;
 }
 
-std::vector<Pixel *> constructImagePixels(const cv::Mat &img, int rows, int columns){
-    std::vector<Pixel *> pixels(rows*columns);
+std::vector<pixel_pointer> constructImagePixels(const cv::Mat &img, int rows, int columns){
+    std::vector<pixel_pointer> pixels(rows*columns);
 
-    Component* firstComponent = makeComponent(0, 0, img.at<cv::Vec3b>(0, 0));
-    auto* firstComponentStruct = new ComponentStruct;
+    component_pointer firstComponent = makeComponent(0, 0, img.at<cv::Vec3b>(0, 0));
+    component_struct_pointer firstComponentStruct =std::make_shared<ComponentStruct>();
     firstComponentStruct->component = firstComponent;
     auto previousComponentStruct = firstComponentStruct;
     int index;
@@ -64,8 +64,8 @@ std::vector<Pixel *> constructImagePixels(const cv::Mat &img, int rows, int colu
     {
         for(int column=0; column < columns; column++)
         {
-            Component* component=makeComponent(row, column, img.at<cv::Vec3b>(row, column));
-            auto* newComponentStruct = new ComponentStruct;
+            component_pointer component=makeComponent(row, column, img.at<cv::Vec3b>(row, column));
+            component_struct_pointer newComponentStruct = std::make_shared<ComponentStruct>();
             newComponentStruct->component = component;
             newComponentStruct->previousComponentStruct = previousComponentStruct;
             previousComponentStruct->nextComponentStruct = newComponentStruct;
@@ -76,15 +76,14 @@ std::vector<Pixel *> constructImagePixels(const cv::Mat &img, int rows, int colu
         }
     }
     firstComponentStruct = firstComponentStruct->nextComponentStruct;
-    delete firstComponentStruct->previousComponentStruct;
     firstComponentStruct->previousComponentStruct = nullptr;
     return pixels;
 }
 
-std::vector<Edge *> setEdges(const std::vector<Pixel *> &pixels, const std::string colorSpace, const int rows, const int columns){
+std::vector<edge_pointer> setEdges(const std::vector<pixel_pointer> &pixels, const std::string colorSpace, const int rows, const int columns){
     int edgeArraySize = getEdgeArraySize(rows, columns);
-    std::vector<Edge *> edges(edgeArraySize);
-    std::function<double(Pixel*, Pixel*)> edgeDifferenceFunction;
+    std::vector<edge_pointer> edges(edgeArraySize);
+    std::function<double(pixel_pointer, pixel_pointer)> edgeDifferenceFunction;
     if (colorSpace == "rgb"){
         edgeDifferenceFunction = rgbPixelDifference;
     }else{
@@ -93,7 +92,7 @@ std::vector<Edge *> setEdges(const std::vector<Pixel *> &pixels, const std::stri
     int edgeCount = 0;
     for(int row=0; row < rows; ++row){
         for(int column=0; column < columns; ++column) {
-            Pixel* presentPixel = pixels[getSingleIndex(row, column, columns)];
+            pixel_pointer presentPixel = pixels[getSingleIndex(row, column, columns)];
             if(row < rows - 1){
                 if(column == 0){
                     edges[edgeCount++] = createEdge(presentPixel, pixels[getSingleIndex(row, column+1, columns)], edgeDifferenceFunction);
@@ -128,7 +127,7 @@ int getRandomNumber(const int min,const int max)
     return min + static_cast<int>((max - min + 1) * (std::rand() * fraction));
 }
 
-cv::Mat addColorToSegmentation(const ComponentStruct* componentStruct, const int rows, const int columns){
+cv::Mat addColorToSegmentation(component_struct_pointer componentStruct, const int rows, const int columns){
     cv::Mat segmentedImage(rows, columns, CV_8UC3);
     do{
         uchar r=getRandomNumber(0, 255);

@@ -6,14 +6,14 @@ inline float thresholdFunction(const float componentSize,const float k){
     return k/componentSize;
 }
 
-void segmentImage(const std::vector<Edge *> &edges, int totalComponents, const int minimumComponentSize, const float kValue) {
+void segmentImage(const std::vector<edge_pointer> &edges, int totalComponents, const int minimumComponentSize, const float kValue) {
     std::cout << "Starting Segmentation:\n";
-    Pixel* pixel1;
-    Pixel* pixel2;
-    Component* component1;
-    Component* component2;
-    double minimumInternalDifference;
-    for(Edge* edge: edges){
+    pixel_pointer pixel1;
+    pixel_pointer pixel2;
+    component_pointer component1;
+    component_pointer component2;
+    double minimumInternalDifference{0};
+    for(const auto& edge: edges){
         pixel1 = edge->n1;
         pixel2 = edge->n2;
 
@@ -35,7 +35,7 @@ void segmentImage(const std::vector<Edge *> &edges, int totalComponents, const i
     std::cout << "Before Post Processing Total Components: " << totalComponents << '\n';
 
 //    post-processing:
-    for(Edge* edge: edges){
+    for(auto edge: edges){
         pixel1 = edge->n1;
         pixel2 = edge->n2;
 

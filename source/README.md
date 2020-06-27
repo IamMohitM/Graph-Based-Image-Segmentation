@@ -36,7 +36,7 @@ Execute the program while in build directory
 ### TODO
 - [ ] Fix Relative Paths<br>
 - [x] Add cmake installation
-- [ ] Remove raw pointers and use unique_ptr instead
+- [x] Use smart pointers in place of raw pointers
 - [ ] Validate pointer parameters to functions (prefer passing by reference instead) 
 
 ### License
