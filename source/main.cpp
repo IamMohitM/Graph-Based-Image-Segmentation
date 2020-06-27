@@ -44,7 +44,8 @@ int main(int argc, char* argv[]) {
 
     std::vector<pixel_pointer> pixels = constructImagePixels(img, rows, columns);
     std::vector<edge_pointer> edges = setEdges(pixels, colorSpace, rows, columns);
-    std::sort(edges.begin(), edges.end(), [] (const edge_pointer e1, const edge_pointer e2){
+    std::sort(edges.begin(), edges.end(), [] (const
+    edge_pointer& e1, const edge_pointer& e2){
                                                         return e1->weight < e2->weight;
                                                         });
 

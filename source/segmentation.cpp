@@ -12,7 +12,7 @@ void segmentImage(const std::vector<edge_pointer> &edges, int totalComponents, c
     pixel_pointer pixel2;
     component_pointer component1;
     component_pointer component2;
-    double minimumInternalDifference{0};
+    double minimumInternalDifference;
     for(const auto& edge: edges){
         pixel1 = edge->n1;
         pixel2 = edge->n2;
@@ -35,7 +35,7 @@ void segmentImage(const std::vector<edge_pointer> &edges, int totalComponents, c
     std::cout << "Before Post Processing Total Components: " << totalComponents << '\n';
 
 //    post-processing:
-    for(auto edge: edges){
+    for(const auto& edge: edges){
         pixel1 = edge->n1;
         pixel2 = edge->n2;
 

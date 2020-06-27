@@ -48,8 +48,8 @@ struct ComponentStruct{
     component_struct_pointer nextComponentStruct= nullptr;
 };
 
-edge_pointer createEdge(pixel_pointer pixel1, pixel_pointer pixel2, const std::function<double(pixel_pointer , pixel_pointer)>& edgeDifferenceFunction);
-double rgbPixelDifference(pixel_pointer pixel1, pixel_pointer pixel2);
-double grayPixelDifference(pixel_pointer pixel1, pixel_pointer pixel2);
-void mergeComponents(component_pointer x, component_pointer y, double MSTMaxEdgeValue);
-component_pointer makeComponent(const int row, const int column, const cv::Vec3b& pixelValues);
+edge_pointer createEdge(const pixel_pointer& pixel1, const pixel_pointer& pixel2, const std::function<double(pixel_pointer , pixel_pointer)>& edgeDifferenceFunction);
+double rgbPixelDifference(const pixel_pointer& pixel1, const pixel_pointer& pixel2);
+double grayPixelDifference(const pixel_pointer& pixel1, const pixel_pointer& pixel2);
+void mergeComponents(const component_pointer& x, const component_pointer& y, double MSTMaxEdgeValue);
+component_pointer makeComponent(int row, int column, const cv::Vec3b& pixelValues);

@@ -22,23 +22,24 @@ std::shared_ptr<Component> makeComponent(const int row, const int column, const 
     return component;
 }
 
-void setParentTree(component_pointer childTreePointer, component_pointer parentTreePointer){
-    for(auto nodePointer: childTreePointer->pixels){
+void setParentTree(const component_pointer& childTreePointer, const component_pointer& parentTreePointer){
+    for(const auto& nodePointer: childTreePointer->pixels){
         parentTreePointer->pixels.push_back(nodePointer);
         nodePointer->parentTree = parentTreePointer;
     }
 }
 
-double grayPixelDifference(pixel_pointer pixel1, pixel_pointer pixel2){
+double grayPixelDifference(const pixel_pointer &pixel1, const pixel_pointer& pixel2) {
     return abs(pixel1->intensity - pixel2->intensity);
 }
 
-double rgbPixelDifference(pixel_pointer pixel1, pixel_pointer pixel2){
+double rgbPixelDifference(const pixel_pointer& pixel1, const pixel_pointer& pixel2){
     return sqrt(pow(pixel1->rValue- pixel2->rValue, 2 ) +
                 pow(pixel1->bValue- pixel2->bValue, 2) +
                 pow(pixel1->gValue- pixel2->gValue, 2));
 }
-edge_pointer createEdge(pixel_pointer pixel1, pixel_pointer pixel2, const std::function<double(pixel_pointer, pixel_pointer)> &edgeDifferenceFunction){
+
+edge_pointer createEdge(const pixel_pointer& pixel1, const pixel_pointer& pixel2, const std::function<double(pixel_pointer, pixel_pointer)> &edgeDifferenceFunction){
     edge_pointer edge = std::make_shared<Edge>();
     edge->weight = edgeDifferenceFunction(pixel1, pixel2);
     edge->n1 = pixel1;
@@ -46,7 +47,7 @@ edge_pointer createEdge(pixel_pointer pixel1, pixel_pointer pixel2, const std::f
     return edge;
 }
 
-void mergeComponents(component_pointer x, component_pointer y, const double MSTMaxEdgeValue){
+void mergeComponents(const component_pointer& x, const component_pointer& y, const double MSTMaxEdgeValue){
     if (x != y) {
         component_struct_pointer componentStruct;
         if (x->rank < y->rank) {

@@ -134,7 +134,7 @@ cv::Mat addColorToSegmentation(component_struct_pointer componentStruct, const i
         uchar b=getRandomNumber(0, 255);
         uchar g=getRandomNumber(0, 255);
         cv::Vec3b pixelColor= {b ,g ,r};
-        for(auto pixel: componentStruct->component->pixels){
+        for(const auto& pixel: componentStruct->component->pixels){
             segmentedImage.at<cv::Vec3b>(cv::Point(pixel->column,pixel->row)) = pixelColor;
         }
         componentStruct = componentStruct->nextComponentStruct;
